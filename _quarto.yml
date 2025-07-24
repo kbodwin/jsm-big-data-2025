@@ -1,0 +1,64 @@
+project:
+  type: website
+  output-dir: docs
+  title: "JSM 2025: Large Local Data"
+
+website:
+  title: "JSM 2025: Large Local Data Course"
+  description: "Storing, Importing, Managing, and Analyzing Large Data Locally with R."
+  site-url: https://github.com/kbodwin/jsm-big-data
+  repo-url: https://github.com/kbodwin/jsm-big-data
+  repo-actions: [issue]
+  navbar:
+    background: primary
+    search: true
+    left:
+      - href: index.qmd
+        text: Home
+      - href: bio.qmd
+        text: Presenters
+      - text: Slides
+        menu:
+        - href: materials/slides/00-setup-intro.qmd
+          text: "Introductions; Setup and Install"
+        - href: materials/slides/01-slowdowns-solutions.qmd
+          text: "Identifying Slowdowns and Solutions"
+        - href: materials/slides/02-datatable.qmd
+          text: "Using the data.table package"
+        - href: materials/slides/03-arrow.qmd
+          text: "Using arrow and duckdb"
+        - href: materials/slides/04-datatable.qmd
+          text: "Workflow: Putting it together"
+      - text: Activities
+        menu:
+        - href: materials/activities/01-practice-data.qmd
+          text: "Get started with your data"
+        - href: materials/activities/02-practice-datatable.qmd
+          text: "Practice using data.table"
+        - href: materials/activities/practice-arrow.qmd
+          text: "Practice using arrow and duckdb"
+        - href: materials/activities/practice-workflow.qmd
+          text: "Put it all together"
+       
+
+    right: 
+      - icon: github
+        href: https://github.com/kbodwin/jsm-large-data
+      
+  page-footer:
+    right: "This page is built with ❤️ and [Quarto](https://quarto.org/)."
+    left: "&copy; Copyright 2025, Kelly Bodwin, Tyson Barrett & Jon Keane"
+    background: "#D9E3E4"
+
+format:
+  html:
+    theme: 
+      - cosmo
+      - styles.css
+    toc: true
+    df-print: paged
+
+callout-appearance: simple
+
+execute:
+  freeze: auto
