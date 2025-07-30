@@ -47,7 +47,7 @@ website:
       
   page-footer:
     right: "This page is built with ❤️ and [Quarto](https://quarto.org/)."
-    left: "&copy; Copyright 2025, Kelly Bodwin, Tyson Barrett & Jon Keane"
+    left: "&copy; Copyright 2025, Kelly Bodwin, Tyson Barrett & Jonathan Keane"
     background: "#D9E3E4"
 
 format:
