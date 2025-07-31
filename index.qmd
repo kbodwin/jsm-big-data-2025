@@ -8,8 +8,6 @@ by: Kelly Bodwin, Tyson Barrett & Jon Keane
 
 # Welcome!
 
-Testing out PR previews!
-
 Welcome to this Short Course on **Storing, Importing, Managing, and Analyzing Large Data Locally with R**.  The goal for the course is to provide training in modern tools for working with large data that fits on-disk on a local machine.
 
 This workshop is geared towards researchers and practitioners who regularly use R for their data preparation and/or analysis, but who may not be familiar with strategies and tools for speeding up processes, especially on larger datasets.
