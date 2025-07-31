@@ -33,3 +33,5 @@ jobs:
 
       - name: Deploy to GH pages preview
         uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: docs/
