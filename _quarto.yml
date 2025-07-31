@@ -6,8 +6,8 @@ project:
 website:
   title: "JSM 2025: Large Local Data Course"
   description: "Storing, Importing, Managing, and Analyzing Large Data Locally with R."
-  site-url: https://github.com/kbodwin/jsm-big-data
-  repo-url: https://github.com/kbodwin/jsm-big-data
+  site-url: https://kbodwin.github.io/jsm-big-data-2025
+  repo-url: https://github.com/kbodwin/jsm-big-data-2025
   repo-actions: [issue]
   navbar:
     background: primary
@@ -43,7 +43,7 @@ website:
 
     right: 
       - icon: github
-        href: https://github.com/kbodwin/jsm-large-data
+        href: https://github.com/kbodwin/jsm-large-data-2025
       
   page-footer:
     right: "This page is built with ❤️ and [Quarto](https://quarto.org/)."
