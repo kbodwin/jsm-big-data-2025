@@ -1,1 +1,1 @@
-Sitemap: https://github.com/kbodwin/jsm-big-data/sitemap.xml
+Sitemap: https://kbodwin.github.io/jsm-big-data-2025/sitemap.xml
