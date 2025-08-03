@@ -4,7 +4,6 @@ format:
   revealjs:
     footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
     theme: [simple]
-    scrollable: true
     embed-resources: true
 editor: source
 ---
