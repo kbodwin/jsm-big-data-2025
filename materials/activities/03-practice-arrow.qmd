@@ -5,7 +5,8 @@ editor: source
 
 ## The PUMS Dataset
 
-::: {.incremental}
+[detailed dataset description](https://scaling-arrow-pums.s3.us-east-1.amazonaws.com/readme.html)
+
 - **Public Use Microdata Sample**
   - US Census Bureau data
   - Individual person and household records
@@ -15,9 +16,8 @@ editor: source
 - **Dataset characteristics:**
   - Multiple years (2005-2022, sans 2020)
   - All US states and territories
-  - 53 Million rows (person only)
+  - 53 Million rows (person), 25 Million rows (household)
   - 200+ variables
-:::
 
 ## Reading Partitioned PUMS Data
 

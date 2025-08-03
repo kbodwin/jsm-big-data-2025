@@ -21,6 +21,26 @@ It is increasingly common in academic and professional settings to encounter dat
 
 We expect attendees to have R fluency at the level of a typical introductory course, such as the textbook [R for Data Science](https://r4ds.hadley.nz/) (Wickham, Çetinkaya-Rundel, & Grolemund 2023); as well as familiarity with some data application that may motivate tools beyond the introductory level.
 
+# PUMS dataset
+
+We will be referencing [a dataset that uses the US Census Bureau's PUMS dataset](https://scaling-arrow-pums.s3.us-east-1.amazonaws.com/readme.html). It would be good to download one of these two options before the workshop so you can work on it locally during the workshop. There are a few ways to get the PUMS data before the workshop:
+
+# Easiest, quickest option
+Download a subset of the data: https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip
+
+This subset only includes the person-level data for years 2005, 2018, 2021 and only for states Alaska, Alabama, Arkansas, Arizona, California, Washington, Wisconsin, West Virginia, and Wyoming.
+
+Simply download it and unzip it into a directory called data in your working directory and you can run the examples in the workshop.
+
+# Longer, but full dataset option
+We also host a full version of the dataset in AWS S3.
+
+Once you have setup your [AWS account and CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html), download the data into a data directory to use:
+
+aws s3 cp --recursive s3://scaling-arrow-pums/ ./data/
+
+This is the full dataset, but does require that you setup your AWS CLI and wait for the dataset to be downloaded. This might require `--request-payer requester` after the workshop where you will need to setup an AWS account and pay the small transfer fee.
+
 # Schedule
 
 | Time | Topic | Presenter |
