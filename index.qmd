@@ -37,7 +37,9 @@ We also host a full version of the dataset in AWS S3.
 
 Once you have setup your [AWS account and CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html), download the data into a data directory to use:
 
+```
 aws s3 cp --recursive s3://scaling-arrow-pums/ ./data/
+```
 
 This is the full dataset, but does require that you setup your AWS CLI and wait for the dataset to be downloaded. This might require `--request-payer requester` after the workshop where you will need to setup an AWS account and pay the small transfer fee.
 
