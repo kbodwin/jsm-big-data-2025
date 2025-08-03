@@ -236,7 +236,7 @@ ul.task-list li input[type="checkbox"] {
 <h1>Longer, but full dataset option</h1>
 <p>We also host a full version of the dataset in AWS S3.</p>
 <p>Once you have setup your <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html">AWS account and CLI</a>, download the data into a data directory to use:</p>
-<p>aws s3 cp –recursive s3://scaling-arrow-pums/ ./data/</p>
+<pre><code>aws s3 cp --recursive s3://scaling-arrow-pums/ ./data/</code></pre>
 <p>This is the full dataset, but does require that you setup your AWS CLI and wait for the dataset to be downloaded. This might require <code>--request-payer requester</code> after the workshop where you will need to setup an AWS account and pay the small transfer fee.</p>
 </section>
 <section id="schedule" class="level1">
