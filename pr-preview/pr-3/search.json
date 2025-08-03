@@ -459,14 +459,14 @@
     "href": "materials/activities/03-practice-arrow.html",
     "title": "Hands-on practice: Analysis with PUMS Data",
     "section": "",
-    "text": "Public Use Microdata Sample\n\nUS Census Bureau data\nIndividual person and household records\nAnonymized demographic information\nIncome, education, housing, commute, etc.\n\nDataset characteristics:\n\nMultiple years (2005-2022, sans 2020)\nAll US states and territories\n53 Million rows (person only)\n200+ variables"
+    "text": "detailed dataset description\n\nPublic Use Microdata Sample\n\nUS Census Bureau data\nIndividual person and household records\nAnonymized demographic information\nIncome, education, housing, commute, etc.\n\nDataset characteristics:\n\nMultiple years (2005-2022, sans 2020)\nAll US states and territories\n53 Million rows (person), 25 Million rows (household)\n200+ variables"
   },
   {
     "objectID": "materials/activities/03-practice-arrow.html#the-pums-dataset",
     "href": "materials/activities/03-practice-arrow.html#the-pums-dataset",
     "title": "Hands-on practice: Analysis with PUMS Data",
     "section": "",
-    "text": "Public Use Microdata Sample\n\nUS Census Bureau data\nIndividual person and household records\nAnonymized demographic information\nIncome, education, housing, commute, etc.\n\nDataset characteristics:\n\nMultiple years (2005-2022, sans 2020)\nAll US states and territories\n53 Million rows (person only)\n200+ variables"
+    "text": "detailed dataset description\n\nPublic Use Microdata Sample\n\nUS Census Bureau data\nIndividual person and household records\nAnonymized demographic information\nIncome, education, housing, commute, etc.\n\nDataset characteristics:\n\nMultiple years (2005-2022, sans 2020)\nAll US states and territories\n53 Million rows (person), 25 Million rows (household)\n200+ variables"
   },
   {
     "objectID": "materials/activities/03-practice-arrow.html#reading-partitioned-pums-data",
