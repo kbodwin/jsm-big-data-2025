@@ -6,7 +6,7 @@ on:
       - synchronize
       - closed
 
-name: Render with the subset data
+name: Preview render
 
 permissions:
   contents: write
@@ -17,7 +17,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     concurrency:
       group: render-subset-data-${{ github.event.number }}
-    name: Render the book using the small dataset
+    name: Workshop materials
     steps:
       - uses: actions/checkout@v4
 
