@@ -26,7 +26,7 @@ We expect attendees to have R fluency at the level of a typical introductory cou
 We will be referencing [a dataset that uses the US Census Bureau's PUMS dataset](https://scaling-arrow-pums.s3.us-east-1.amazonaws.com/readme.html). It would be good to download one of these two options before the workshop so you can work on it locally during the workshop. There are a few ways to get the PUMS data before the workshop:
 
 # Easiest, quickest option
-Download a subset of the data: https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip
+Download a subset of the data: [https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip](https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip)
 
 This subset only includes the person-level data for years 2005, 2018, 2021 and only for states Alaska, Alabama, Arkansas, Arizona, California, Washington, Wisconsin, West Virginia, and Wyoming.
 
