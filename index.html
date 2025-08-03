@@ -175,6 +175,9 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#short-course-description" id="toc-short-course-description" class="nav-link" data-scroll-target="#short-course-description">Short Course Description</a></li>
   <li><a href="#intended-audience-and-level" id="toc-intended-audience-and-level" class="nav-link" data-scroll-target="#intended-audience-and-level">Intended Audience and Level</a></li>
   </ul></li>
+  <li><a href="#pums-dataset" id="toc-pums-dataset" class="nav-link" data-scroll-target="#pums-dataset">PUMS dataset</a></li>
+  <li><a href="#easiest-quickest-option" id="toc-easiest-quickest-option" class="nav-link" data-scroll-target="#easiest-quickest-option">Easiest, quickest option</a></li>
+  <li><a href="#longer-but-full-dataset-option" id="toc-longer-but-full-dataset-option" class="nav-link" data-scroll-target="#longer-but-full-dataset-option">Longer, but full dataset option</a></li>
   <li><a href="#schedule" id="toc-schedule" class="nav-link" data-scroll-target="#schedule">Schedule</a></li>
   <li><a href="#workshop-materials" id="toc-workshop-materials" class="nav-link" data-scroll-target="#workshop-materials">Workshop Materials</a></li>
   </ul>
@@ -204,7 +207,7 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="large-local-data" class="level2">
 <h2 class="anchored" data-anchor-id="large-local-data">Large Local Data</h2>
-<p>by: Kelly Bodwin, Tyson Barrett &amp; Jon Keane</p>
+<p>by: Kelly Bodwin, Tyson Barrett &amp; Jonathan Keane</p>
 </section>
 <section id="welcome" class="level1">
 <h1>Welcome!</h1>
@@ -218,6 +221,23 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="intended-audience-and-level">Intended Audience and Level</h2>
 <p>We expect attendees to have R fluency at the level of a typical introductory course, such as the textbook <a href="https://r4ds.hadley.nz/">R for Data Science</a> (Wickham, Çetinkaya-Rundel, &amp; Grolemund 2023); as well as familiarity with some data application that may motivate tools beyond the introductory level.</p>
 </section>
+</section>
+<section id="pums-dataset" class="level1">
+<h1>PUMS dataset</h1>
+<p>We will be referencing <a href="https://scaling-arrow-pums.s3.us-east-1.amazonaws.com/readme.html">a dataset that uses the US Census Bureau’s PUMS dataset</a>. It would be good to download one of these two options before the workshop so you can work on it locally during the workshop. There are a few ways to get the PUMS data before the workshop:</p>
+</section>
+<section id="easiest-quickest-option" class="level1">
+<h1>Easiest, quickest option</h1>
+<p>Download a subset of the data: <a href="https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip">https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip</a></p>
+<p>This subset only includes the person-level data for years 2005, 2018, 2021 and only for states Alaska, Alabama, Arkansas, Arizona, California, Washington, Wisconsin, West Virginia, and Wyoming.</p>
+<p>Simply download it and unzip it into a directory called data in your working directory and you can run the examples in the workshop.</p>
+</section>
+<section id="longer-but-full-dataset-option" class="level1">
+<h1>Longer, but full dataset option</h1>
+<p>We also host a full version of the dataset in AWS S3.</p>
+<p>Once you have setup your <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html">AWS account and CLI</a>, download the data into a data directory to use:</p>
+<pre><code>aws s3 cp --recursive s3://scaling-arrow-pums/ ./data/</code></pre>
+<p>This is the full dataset, but does require that you setup your AWS CLI and wait for the dataset to be downloaded. This might require <code>--request-payer requester</code> after the workshop where you will need to setup an AWS account and pay the small transfer fee.</p>
 </section>
 <section id="schedule" class="level1">
 <h1>Schedule</h1>
@@ -267,13 +287,13 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td style="text-align: center;">1:30 - 2:30</td>
-<td style="text-align: center;"><a href="./materials/slides/03-arrow.html">III. arrow, parquet, duckdb</a></td>
-<td style="text-align: center;">Jon</td>
+<td style="text-align: center;"><a href="./materials/slides/03-arrow.html">III. parquet, arrow, duckdb</a></td>
+<td style="text-align: center;">Jonathan</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">2:30 - 3:00</td>
 <td style="text-align: center;"><a href="./materials/activities/03-practice-arrow.html">Activity 3</a></td>
-<td style="text-align: center;">Jon</td>
+<td style="text-align: center;">Jonathan</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">3:00 - 3:30</td>
