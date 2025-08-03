@@ -1,5 +1,6 @@
 ---
-title: ""
+title: "`data.table`"
+subtitle: "Fast and Memory Efficient Data Manipulation"
 format: 
   revealjs:
     footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
@@ -7,6 +8,619 @@ format:
     scrollable: true
     embed-resources: true
 editor: source
+execute:
+  message: false
+  warning: false
+  echo: true
 ---
 
+---
 
+<br>
+
+> "Sometimes I'll start a sentence and I don't even know where it's going. I just hope I find it along the way."
+
+. . .
+
+<br>
+
+> "I am fast. To give you a reference point, I am somewhere between a snake and a mongoose... and a panther." 
+
+
+## Why `data.table`?
+
+::: {.fragment .fade-in-then-semi-out}
+1. **Concise syntax**: fast to type, fast to read -- "Me think, why waste time say lot word when few word do trick."
+:::
+
+::: {.fragment .fade-in-then-semi-out}
+2. **Fast speed**: optimized C code under the hood -- "I am faster than 80 percent of all snakes."
+:::
+
+::: {.fragment .fade-in-then-semi-out}
+3. **Memory efficient**: modify by reference -- "Whenever I’m about to do something, I think, “would an idiot do that?” And if they would, I do not do that thing."
+:::
+
+## Why `data.table`?
+
+::: {.fragment .fade-in-then-semi-out}
+4. **Careful API lifecycle management**: stable, backward compatible -- "I'm not superstitious, but I am a little stitious."
+:::
+
+::: {.fragment .fade-in-then-semi-out}
+5. **Community**: active development and support -- "Would I rather be feared or loved? Easy. Both. I want people to be afraid of how much they love me."
+:::
+
+::: {.fragment .fade-in-then-semi-out}
+6. **Feature rich**: comprehensive data manipulation toolkit -- "Bears, beets, Battlestar Galactica."
+:::
+
+
+
+# Data for Examples {background="#43464B"}
+
+## Loading PUMS Data
+
+Preview to next section with Jonathon about `arrow`:
+
+```{r}
+library(data.table)
+library(dplyr)
+library(arrow)
+
+# Preview into next section: Load multiple states and years using arrow
+pums <- open_dataset(here::here("data/person")) |>
+  filter(year >= 2020, location %in% c("ca", "tx", "ny")) |>
+  collect()
+setDT(pums)
+```
+
+## Loading PUMS Data
+
+```{r}
+pums[, 1:5]
+names(pums)
+```
+
+
+## 1. Concise Syntax
+
+"why waste time say lot word when few word do trick."
+
+<br>
+
+![](images/dt_syntax.png)
+
+
+:::{.notes}
+In `j` we can grab individual variables or a list of them (using the `.()`)
+:::
+
+## 1. Concise Syntax
+
+**Fast to type, fast to read**
+
+```{r}
+#| code-line-numbers: "1-6|8-13"
+# Base R approach
+pums_df <- as.data.frame(pums)
+subset_data <- pums_df[pums$ST == "California/CA" & pums$year == 2022, ]
+age_groups <- ifelse(subset_data$AGEP < 18, "Under 18",
+                    ifelse(subset_data$AGEP < 65, "18-64", "65+"))
+base_result <- aggregate(subset_data$PWGTP, by = list(age_group = age_groups), FUN = sum)
+
+# data.table approach
+pums[, age_groups := fcase(AGEP < 18, "Under 18", AGEP < 65, "18-64", default = "65+")]
+dt_result <- pums[
+  year == 2022 & ST == "California/CA", 
+  .(total_pop = sum(PWGTP)), 
+  by = age_groups
+]
+```
+
+. . .
+
+::::columns
+::: {.column width="50%"}
+
+```{r}
+base_result
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+dt_result
+```
+
+:::
+::::
+
+
+## Fill in the Blank {auto-animate="true"}
+
+We want to take the `pums` data.table and select the `SCHL`, `SEX`, `ST`, and `AGEP`.
+
+```{r}
+#| eval: false
+dt_subset <- pums[,
+
+]
+```
+
+
+## Fill in the Blank {auto-animate="true"}
+
+We want to take the `pums` data.table and select the `SCHL`, `SEX`, `ST`, and `AGEP`.
+
+```{r}
+#| eval: false
+dt_subset <- pums[,
+  .(SCHL, SEX, ST, AGEP)
+]
+```
+
+## Fill in the Blank
+
+We want to subset to those in "ny" based on our `location` variable, group by `age_groups` and `year`, and get the proportion of those in the "Civilian employed, at work" based on the `ESR` variable.
+
+```{r}
+#| eval: false
+dt_ny <- pums[
+
+
+
+]
+```
+
+## Fill in the Blank {auto-animate="true"}
+
+We want to subset to those in "ny" based on our `location` variable, group by `age_groups` and `year`, and get the proportion of those in the "Civilian employed, at work" based on the `ESR` variable.
+
+```{r}
+#| eval: false
+dt_ny <- pums[
+  location == "ny",
+  .(employed = mean(ESR == "Civilian employed, at work", na.rm = TRUE)),
+  by = .(age_groups, year)
+]
+```
+
+## What will this do?
+
+`HINSx` are insurance types
+`WAGP` income (wages/salary) last 12 months
+
+```{r}
+#| eval: false
+pums[, ins_type := fcase(
+  HINS1 == TRUE, "employer", 
+  HINS2 == TRUE, "direct", 
+  HINS3 == TRUE, "Medicare", 
+  HINS4 == TRUE, "Medicaid",
+  HINS5 == TRUE | HINS6 == TRUE | HINS7 == TRUE, "other",
+  default = "no insurance")
+]
+pums[, .(avg_income = mean(WAGP, na.rm = TRUE)), by = ins_type]
+```
+
+
+## What will this do?
+
+`HINSx` are insurance types
+`WAGP` income (wages/salary) last 12 months
+
+```{r}
+pums[, ins_type := fcase(
+  HINS1 == TRUE, "employer", 
+  HINS2 == TRUE, "direct", 
+  HINS3 == TRUE, "Medicare", 
+  HINS4 == TRUE, "Medicaid",
+  HINS5 == TRUE | HINS6 == TRUE | HINS7 == TRUE, "other",
+  default = "no insurance")
+]
+pums[, .(avg_income = mean(WAGP, na.rm = TRUE)), by = ins_type]
+```
+
+
+## 2. Fast Speed
+
+"I am faster than 80 percent of all snakes."
+
+Benchmarking is **difficult**
+
+```{r}
+# Benchmarking aggregation operations
+microbenchmark::microbenchmark(
+  # data.table
+  pums[, .(total_pop = sum(PWGTP)), by = .(ST, year)],
+  
+  # dplyr
+  pums_df |> 
+    group_by(ST, year) |> 
+    summarise(total_pop = sum(PWGTP), .groups = "drop"),
+
+  times = 10
+)
+```
+
+
+## 2. Fast Speed
+
+```{r}
+# Benchmarking aggregation operations
+microbenchmark::microbenchmark(
+  # data.table
+  pums[, .(total_pop = sum(PWGTP)), keyby = .(ST, year)],
+  
+  # dplyr
+  pums_df |> 
+    group_by(ST, year) |> 
+    summarise(total_pop = sum(PWGTP), .groups = "drop") |> 
+    arrange(ST, year),
+
+  times = 10
+)
+```
+
+
+## 3. Memory Efficient
+
+::: {.large}
+Quick History Lesson on Shallow/Deep Copies
+:::
+
+. . .
+
+```{r}
+# Create a copy (memory inefficient)
+pums_nocopy <- pums
+pums_nocopy[, age_decade := floor(AGEP / 10) * 10]
+
+# Modify by reference (memory efficient)
+pums[, age_decade := floor(AGEP / 10) * 10]
+
+# shows up in pums_nocopy
+pums_nocopy[, .(age_decade)]
+```
+
+. . . 
+
+:::: columns
+::: {.column}
+
+```{r}
+lobstr::ref(pums)
+```
+:::
+
+::: {.column}
+
+```{r}
+lobstr::ref(pums_nocopy)
+```
+:::
+::::
+
+
+## 3. Memory Efficient
+
+
+**Modify by reference - no copies**
+
+```{r}
+# Deep Copy (full dataset copied)
+pums_copy <- copy(pums)
+
+# adding variable to this does not alter the original
+pums_copy[, age_decade := floor(AGEP / 10) * 10]
+```
+
+. . .
+
+:::: columns
+::: {.column}
+
+```{r}
+lobstr::ref(pums)
+```
+:::
+
+::: {.column}
+
+```{r}
+lobstr::ref(pums_copy)
+```
+:::
+::::
+
+
+## `set*()` Functions
+
+**Memory-efficient operations by reference**
+
+The `set*()` family of functions modify data.table objects directly in memory without creating copies, making them essential for large datasets.
+
+. . .
+
+### Why set functions are useful:
+
+1. **Memory efficiency**: No copies made, lower RAM usage
+2. **Speed**: Faster than traditional assignment operations  
+3. **Large data friendly**: Essential when working with datasets that approach memory limits
+4. **Consistent syntax**: Uniform approach across different operations
+
+## Key set functions:
+
+```{r}
+#| echo: true
+#| eval: false
+# setnames() - rename columns by reference
+setnames(pums_multi, "AGEP", "age") 
+setnames(pums_multi, c("old1", "old2"), c("new1", "new2"))
+
+# setkey() - set keys for fast operations
+setkey(pums_multi, ST, year)  # Fast lookups and joins
+
+# setorder() - sort by reference
+setorder(pums_multi, ST, -AGEP)  # Sort by state, then age descending
+
+# set() - general purpose setter
+set(pums_multi, i = 1L, j = "AGEP", value = 99L)  # Set specific cell
+set(pums_multi, j = "new_col", value = 0L)        # Add column with default value
+```
+
+
+## Tradeoffs of Modify by Reference
+
+1. Need to keep track of what is referencing the same data
+2. Use copies if you want to keep data independent
+3. When done properly, it can be very memory efficient
+
+## What will this do?
+
+```{r}
+pums2 = pums
+names(pums2)[1] <- "id"
+```
+
+## What creates a copy besides `copy()`
+
+1. When you subset the data (select columns or filter rows)
+2. Change a data.table to a data.frame or tibble
+3. Aggregate or summarizing of the data.table
+
+
+
+## 4. API Lifecycle Management
+
+"I'm not superstitious, but I am a little stitious."
+
+**Stable and backward compatible**
+
+**Key principles:**
+- Backward compatibility maintained
+- New features don't break existing code
+- Clear deprecation warnings when needed
+
+
+## 5. Community
+
+**Active development and strong ecosystem**
+
+- **GitHub**: 3,500+ stars, active issues and PRs
+- **CRAN**: Over 1,000 reverse dependencies
+- **Stack Overflow**: 15,000+ questions tagged with data.table
+- **Documentation**: Comprehensive vignettes and examples
+- **Extensions**: dtplyr, data.table.express, and more
+
+```r
+# Getting help
+?data.table
+vignette("datatable-intro")
+browseVignettes("data.table")
+```
+
+
+## 6. Feature Rich
+
+**Comprehensive data manipulation toolkit**
+
+### Joins
+```{r}
+#| echo: true
+#| eval: false
+# Load household data for comparison
+household_data <- open_dataset("data/household") |>
+  filter(year >= 2020, location %in% c("ca", "tx", "ny")) |>
+  collect() |>
+  as.data.table()
+
+# Create state-year summary from household data
+household_summary <- household_data[, 
+  .(avg_income = mean(HINCP, na.rm = TRUE)), 
+  by = .(ST, year)]
+
+# Join person and household summaries
+pums_multi[household_summary, on = .(ST, year)]
+```
+
+
+## Feature Rich
+
+### Reshaping
+```{r}
+#| echo: true
+#| eval: false
+# Pivot longer - select key demographics
+pums_long <- melt(pums_multi, 
+                  id.vars = c("ST", "year", "SERIALNO"),
+                  measure.vars = c("AGEP", "PWGTP", "PINCP"))
+
+# Pivot wider - average by state/year
+pums_summary <- pums_multi[, .(avg_age = mean(AGEP, na.rm = TRUE),
+                               avg_income = mean(PINCP, na.rm = TRUE)), 
+                           by = .(ST, year)]
+dcast(pums_summary, ST ~ year, value.var = "avg_age")
+```
+
+
+
+## Feature Rich
+
+### Rolling operations
+```{r}
+#| echo: true
+#| eval: false
+# Population change over time by state
+pums_yearly <- pums_multi[, .(pop = sum(PWGTP)), by = .(ST, year)]
+setkey(pums_yearly, ST, year)
+
+# Calculate 2-year rolling average (limited years available)
+pums_yearly[, pop_2yr_avg := frollmean(pop, 2), by = ST]
+print(pums_yearly)
+```
+
+
+## Feature Rich
+
+### Advanced grouping
+```{r}
+#| echo: true
+#| eval: false
+# Multiple grouping operations
+pums_multi[ST %in% c("California/CA", "Texas/TX", "New York/NY"), 
+           .(pop = sum(PWGTP),
+             avg_age = weighted.mean(AGEP, PWGTP, na.rm = TRUE),
+             median_income = median(PINCP[PINCP > 0], na.rm = TRUE)), 
+           by = .(ST, year)]
+```
+
+
+## Feature Rich
+
+### Operators - Core Symbols
+
+**Essential data.table operators for efficient data manipulation**
+
+```{r}
+#| echo: true
+#| eval: false
+# .N - Number of rows in each group
+pums_multi[, .N, by = ST]  # Count rows by state
+
+# .SD - Subset of Data (all columns except grouping)
+pums_multi[, lapply(.SD, mean, na.rm = TRUE), 
+           by = ST, .SDcols = c("AGEP", "PINCP")]
+
+# .BY - List of grouping variables
+pums_multi[, .(mean_age = mean(AGEP), 
+               state = .BY[[1]]), by = ST]
+
+# .I - Row indices 
+pums_multi[, .I[which.max(AGEP)], by = ST]  # Index of oldest person per state
+
+# .() or list() - Create columns in j
+pums_multi[, .(pop = sum(PWGTP), avg_age = mean(AGEP)), by = ST]
+```
+
+
+## Feature Rich
+
+### Operators - Advanced Features
+
+**Specialized operators for complex operations**
+
+```{r}
+#| echo: true
+#| eval: false
+# .EACHI - For each item in i (useful with joins)
+household_summary[pums_multi, on = .(ST, year), .EACHI]
+
+# .GRP - Group counter (1, 2, 3, ...)
+pums_multi[, .(grp_num = .GRP, pop = sum(PWGTP)), by = ST]
+
+# Multiple .SD operations with .SDcols
+pums_multi[, {
+  numeric_cols <- .SD[, sapply(.SD, is.numeric)]
+  list(means = lapply(.SD[, ..numeric_cols], mean, na.rm = TRUE),
+       medians = lapply(.SD[, ..numeric_cols], median, na.rm = TRUE))
+}, by = ST, .SDcols = c("AGEP", "PINCP", "PWGTP")]
+
+# Chaining with operators
+pums_multi[year == 2022][, .N, by = ST][order(-N)]
+```
+
+
+## Feature Rich
+
+Not convinced by the syntax?
+
+```{r}
+library(dtplyr)
+
+pums_dt <- pums |> 
+  lazy_dt() |> 
+  select(id, age_groups, year) |> 
+  group_by(age_groups, year) |> 
+  summarise()
+```
+
+
+
+## Getting Started
+
+**Installation and basic setup**
+
+```{r}
+#| echo: true
+#| eval: false
+# Install data.table and arrow
+install.packages(c("data.table", "arrow"))
+
+# Load libraries
+library(data.table)
+library(arrow)
+
+# Load partitioned PUMS data
+pums_dt <- open_dataset("data/person") |>
+  filter(year == 2022, location == "ca") |>
+  collect() |>
+  as.data.table()
+
+# Or convert existing data.frame
+dt <- as.data.table(your_data)
+
+# Set keys for performance
+setkey(pums_dt, ST, PUMA)
+```
+
+
+## Key Takeaways
+
+1. **Learn the `DT[i, j, by]` syntax** - it's the foundation
+2. **Use keys** for fast subsetting and joins
+3. **Modify by reference** with `:=` for memory efficiency
+4. **fread()** for fast file reading
+5. **Chain operations** for readable, efficient code
+6. **Check the documentation** - excellent vignettes available
+
+**Resources:**
+- Official vignettes: `vignette("datatable-intro")`
+- GitHub: https://github.com/Rdatatable/data.table
+- Stack Overflow: [data.table] tag
+
+
+## Questions?
+
+**Ready to make your data analysis faster and more efficient!**
+
+Try these exercises with the PUMS dataset:
+1. Calculate population by age group for your home state
+2. Find the fastest growing states between 2010-2022
+3. Compare median income across education levels
+4. Analyze demographic changes over time
+
+Visit the practice activities for hands-on experience!
