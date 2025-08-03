@@ -15,6 +15,10 @@ format:
                 align-items: center;
                 height: 90%;
             }
+            .v-spacier {
+                margin-bottom: 2em; 
+                margin-top: 2em;
+            }
             </style>
 editor: source
 ---
@@ -70,12 +74,12 @@ We have pulled the key into the actual data so you don't need to do the lookups 
 
 ## Can I analyze all of PUMS?
 
-::: {.fragment style="margin-bottom: 2em; margin-top: 2em;"}
+::: {.fragment .spacier"}
 Most analysis of PUMS data starts with subsetting the data. Either by state (or even smaller) or year and often both.
 :::
 
 
-::: {.fragment style="margin-bottom: 2em; margin-top: 2em;"}
+::: {.fragment .spacier"}
 But with the tools we learn about in this workshop, we actually can analyze the whole dataset.
 :::
 
