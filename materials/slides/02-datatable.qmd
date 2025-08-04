@@ -519,11 +519,12 @@ benefit_thresholds
 
 ```{r}
 # Rolling join to assign benefits based on nearest age threshold
-pums[, benefit_category := benefit_thresholds[
-  .(AGEP), 
-  benefit_type, 
+pums[
+  benefit_thresholds, 
+  benefit_category := benefit_type, 
+  on = .(AGEP = age_threshold), 
   roll = -Inf
-]]
+]
 pums[, .(AGEP, benefit_category, ins_type, location)]
 ```
 
@@ -611,9 +612,8 @@ pums |>
 1. **Learn the `DT[i, j, by]` syntax** - it's the foundation
 2. **Use keys** for fast subsetting and joins
 3. **Modify by reference** with `:=` for memory efficiency
-4. **fread()** for fast file reading
-5. **Chain operations** for readable, efficient code
-6. **Check the documentation** - excellent vignettes available
+4. **Chain operations and use operators** for readable, efficient code
+5. **Check the documentation** - excellent vignettes available
 
 **Resources:**
 
