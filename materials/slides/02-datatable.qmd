@@ -622,15 +622,4 @@ pums |>
 - Stack Overflow: [data.table] tag
 
 
-## Questions?
 
-**Ready to make your data analysis faster and more efficient!**
-
-Try these exercises with the PUMS dataset:
-
-1. Calculate population by age group for your home state
-2. Find the fastest growing states between 2010-2022
-3. Compare median income across education levels
-4. Analyze demographic changes over time
-
-Visit the practice activities for hands-on experience!
