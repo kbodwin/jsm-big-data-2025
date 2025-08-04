@@ -61,4 +61,4 @@ format:
 callout-appearance: simple
 
 execute:
-  freeze: auto
+  freeze: true
