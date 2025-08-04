@@ -45,7 +45,12 @@ schema(pums_ds)
 ::: panel-tabset
 ### Problems
 
-* What was the population of California in 2018?
+* What was the population of Tennessee in 2018?
+* What was the population of Tennessee over the last five years of available data?
+
+### Hint
+
+Try using familiar dplyr verbs: `filter()`, `summarize()`, et c.
 
 ### Solution
 
@@ -57,66 +62,59 @@ library(dplyr)
 # Open the PUMS dataset
 pums_ds <- open_dataset("~/PUMS/data/person")
 
-
-result <- pums_ds |>
-  filter(year == 2018, location == "ca") |>
+pums_ds |>
+  filter(year == 2018, location == "tn") |>
   summarize(
     n = n(),
     population = sum(PWGTP)
   ) |>
   collect()
 
-# View results
-head(result1)
+pums_ds |>
+  filter(location == "tn") |>
+  group_by(year) |>
+  summarize(
+    n = n(),
+    population = sum(PWGTP)
+  ) |>
+  arrange(-year) |>
+  slice_head(n = 5) |>
+  collect()
 ```
 :::
 
-## Exercise 2: Using DuckDB with PUMS Data
+## Exercise 3: Using DuckDB with PUMS Data
 
 ::: panel-tabset
 ### Problems
+
+For each state, compute the minimum commute time and the maximum commute time. Return it in a long data frame (hint, you'll need to use `tidyr::pivot_longer` here) with the columns: `location`, `commute_metric` (values: `max_commute`, `min_commute`), `time`. 
+
+For motivation: if you were trying to plot using `ggplot2` and wanted both the minimums and the maximums to show up on the same plot.
+
+### Hint
+Arrow's query engine doesn't support `tidyr::pivot_longer`. So you'll need to use `to_duckdb()` and then use duckdb from there.
 
 ### Solution
 ```{r}
 #| eval: false
 library(arrow)
 library(duckdb)
-library(DBI)
+library(tidyr)
 
-# Open the PUMS dataset with Arrow
-pums_ds <- open_dataset("data/person")
+# Open the PUMS dataset
+pums_ds <- open_dataset("~/PUMS/data/person")
 
-# Filter to just 2021 data for Washington
-wa_2021 <- pums_ds |>
-  filter(year == 2021, location == "wa") |>
+pums_ds |>
+  group_by(location) |>
+  summarize(
+    max_commute = max(JWMNP, na.rm = TRUE),
+    min_commute = min(JWMNP, na.rm = TRUE)
+  ) |>
+  to_duckdb() |> 
+  pivot_longer(!location, names_to = "commute_metric", values_to = "time") |>
+  arrange(location) |>
   collect()
-
-# Create DuckDB connection
-con <- dbConnect(duckdb())
-
-# Register Arrow Table with DuckDB
-duckdb::duckdb_register_arrow(con, "pums_wa", wa_2021)
-
-# Run SQL query
-result <- dbGetQuery(con, "
-  SELECT 
-    CASE 
-      WHEN AGEP < 18 THEN 'Under 18'
-      WHEN AGEP < 30 THEN '18-29'
-      WHEN AGEP < 45 THEN '30-44'
-      WHEN AGEP < 65 THEN '45-64'
-      ELSE '65+'
-    END AS age_group,
-    AVG(JWMNP) AS avg_commute_time,
-    COUNT(*) AS n
-  FROM pums_wa
-  WHERE JWMNP > 0
-  GROUP BY age_group
-  ORDER BY age_group
-")
-
-# Disconnect when done
-dbDisconnect(con, shutdown = TRUE)
 ```
 :::
 
@@ -144,7 +142,7 @@ dbDisconnect(con, shutdown = TRUE)
   - US Census Bureau data
   - Individual person and household records
   - Anonymized demographic information
-  - Income, education, housing, commute, etc.
+  - Income, education, housing, commute, et c.
 
 - **Dataset characteristics:**
   - Multiple years (2005-2022, sans 2020)

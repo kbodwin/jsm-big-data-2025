@@ -825,7 +825,7 @@ Mention Acero engine in C++
 ::: {.incremental}
 - **Lazy evaluation workflow:**
   - Define operations (filter, group, summarize)
-  - Optimizes the plan (predicate pushdown, etc.)
+  - Optimizes the plan (predicate pushdown, et c.)
   - Only reads necessary data from disk
   - Executes when `collect()` is called
 
