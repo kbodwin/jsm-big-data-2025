@@ -1,13 +1,10 @@
 ---
-title: ""
+title: "Practice a Smooth Workflow"
 editor: source
 ---
 
 ## Setup
 
-## Demo
-
-Here is the full workflow from the slides, all in `dplyr`-like syntax:
 
 ## Your Turn
 
@@ -19,5 +16,37 @@ Then use your favorite benchmarking or speed testing approach from unit 1 to dem
 
 ```{r}
 
+
+states <- c("ak", "al", "ar", "az", "wa", "wi", "wv", "wy")
+
+dat <- data.frame()
+
+for (state in states) {
+  my_files <- list.files(glue("./materials/data/raw_csvs/person/2021/{state}/"), full.names = TRUE)
+  
+  for (file in my_files) {
+    
+    temp <- read_csv(file) |>
+      mutate_all(as.character)
+    
+    dat <- dat |>
+      bind_rows(temp)
+    
+  }
+}
+
+
+dat[year == 2021][, .(avg_age = mean(AGEP)), by = ST][order(-avg_age)]
+
+
+
+dat |>
+  group_by(location) |>
+  summarize(
+    max_commute = max(JWMNP, na.rm = TRUE),
+    min_commute = min(JWMNP, na.rm = TRUE)
+  ) |> 
+  pivot_longer(!location, names_to = "commute_metric", values_to = "time") |>
+  arrange(location) 
 ```
 

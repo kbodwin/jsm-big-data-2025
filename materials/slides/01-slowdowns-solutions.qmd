@@ -2,14 +2,16 @@
 title: "Finding slowdowns and solutions."
 format: 
   revealjs:
-    footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
+    footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-big-data-2025/tree/main/materials)"
     theme: simple
     scrollable: true
     embed-resources: true
 editor: source
+execute:
+  echo: true
 ---
 
-# "In-Memory Data" {background-color="#0F4C81"}
+# "Local Data" {background-color="#0F4C81"}
 
 ## You have data that...
 
@@ -42,9 +44,9 @@ editor: source
 
 ## Key Terms
 
-* Data is **in-memory** if
+* Data is **on disk** if it is stored on your computer
 
-* Data is **on disk** if
+* Data is **in-memory** if you load it into RAM, e.g. loading into R.
 
 * A **csv** file is a file type for storing data as *comma separated text*.
 
@@ -71,7 +73,6 @@ editor: source
     + `odbc`,  for connection to cloud databases
 
 * Other speed/efficiency helpers: 
-    + `vroom` for reading data
     + `polars` in python
 
 
@@ -107,16 +108,153 @@ C. Are you doing a *subsetting* process? `data.table` or `duckdb`!
 
 D. Is it just a lot of data?  `duckdb` and calculate in partitions.
 
+## Setup
+
+```{r}
+#| include: false
+library(tidyverse)
+library(microbenchmark)
+library(bench)
+library(tictoc)
+library(atime)
+library(profvis)
+```
+
+```{r}
+dat <- read_csv("../data/raw_csvs/person/2021/az/psam_p04.csv")
+```
+
+
 
 # Step 1. Timing Chunks {background-color="#0F4C81"}
 
+
 ## The `tictoc()` package
+
+```{r}
+#| cache: true
+tic()
+
+  dat |>
+    pivot_longer(PWGTP1:PWGTP80,
+               names_to = "Weight_Num",
+               values_to = "Weight_Amount") |>
+    group_by(ST) |>
+    mutate(
+      max_weight = max(Weight_Amount)
+    )
+
+toc()
+  
+```
+
+
 
 
 
 # Step 2. Profiling Processes {background-color="#0F4C81"}
 
+```{r}
+#| cache: true
+profvis::profvis({
+  dat |>
+    pivot_longer(PWGTP1:PWGTP80,
+               names_to = "Weight_Num",
+               values_to = "Weight_Amount") |>
+    group_by(ST) |>
+    mutate(
+      max_weight = max(Weight_Amount)
+    )
+}
+)
+```
+
 
 # Step 3. Benchmarking Solutions {background-color="#0F4C81"}
 
+## Function wrappers (optional)
 
+```{r}
+#| cache: true
+
+old_pipeline <-  function() {
+  dat |>
+    pivot_longer(PWGTP1:PWGTP80,
+               names_to = "Weight_Num",
+               values_to = "Weight_Amount") |>
+    group_by(CIT) |>
+    mutate(
+      max_weight = max(Weight_Amount)
+    )
+}
+
+library(dtplyr)
+
+new_pipeline <- function() {
+  dat |>
+    rowwise() |>
+    summarize(
+      max_weight = max(PWGTP1:PWGTP80),
+      CIT = CIT
+    ) |>
+    group_by(CIT) |>
+    summarize(
+      max_weight = max(max_weight)
+    )
+}
+```
+
+## Microbenchmark for multiple runs
+
+```{r}
+#| cache: true
+microbenchmark::microbenchmark(
+  old_version = old_pipeline(),
+  new_version = new_pipeline(),
+  times = 5
+)
+```
+
+## `bench` package for memory comparisons...
+
+
+```{r}
+#| cache: true
+bench::mark(
+  old_version = old_pipeline(),
+  new_version = new_pipeline(),
+  check = FALSE,
+  max_iterations = 3
+)
+```
+
+## ... and testing scaling with size
+
+```{r}
+#| cache: true
+results <- bench::press(
+  duplications = c(1, 2),
+  {
+    dat_big <- bind_rows(replicate(duplications, dat, simplify = FALSE))
+    bench::mark(
+      old_version = old_pipeline(),
+      new_version = new_pipeline(),
+      check = FALSE,
+      max_iterations = 3
+    )
+  }
+)
+
+results
+```
+
+
+## Summary
+
+1. Use `tictoc()` or `proc.time()` to get a feel for runtimes of larger chunks.
+
+2. Use profiling to narrow down where in a chunk the slowdowns are.
+
+3. Use benchmarking to compare your old version to a proposed solution.
+
+4. Use benchmark testing to see how your speed ups scale with data size.

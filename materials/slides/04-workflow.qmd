@@ -2,7 +2,7 @@
 title: "Towards a Smooth Workflow"
 format: 
   revealjs:
-    footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
+    footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-big-data-2025/tree/main/materials)"
     theme: [simple]
     embed-resources: true
 editor: source
@@ -11,7 +11,25 @@ editor: source
 
 # Organize the data as *parquets* with `arrow` {background-color="#0F4C81"}
 
+## Parquet workflow
+
+* If you only have **csvs**, `arrow` can convert them to **parquets**.
+
+* (Even if the csvs can't be read into R!)
+
+* Think about hive partitions that make sense.
+
+* `arrow` syntax mimics `dplyr` for some table operations.
+
+
+
 # Collect efficiently with `duckdb` {background-color="#0F4C81"}
+
+## `duckdb` workflow
+
+* 
+
+
 
 # Analyze with `data.table` {background-color="#0F4C81"}
 

@@ -2,7 +2,7 @@
 title: "Welcome!"
 format: 
   revealjs:
-    footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
+    footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-big-data-2025/tree/main/materials)"
     theme: simple
     scrollable: true
     embed-resources: true
@@ -112,17 +112,25 @@ editor: source
 
 ```{r}
 #| eval: false
+#| echo: true
 install.packages("pak")
+
 pak::pak(c(
   "data.table",
   "arrow",
   "duckdb",
+  "readr",
+  "here",
+  "glue",
+  "tidyr",
   "dplyr",
   "dtplr",
   "duckplyr",
   "tictoc",
   "microbenchmark",
   "bench",
+  "lobstr",
+  "nanoparquet"
 ))
 
 ```

@@ -4,10 +4,16 @@ pak::pak(c(
   "data.table",
   "arrow",
   "duckdb",
+  "readr",
+  "here",
+  "glue",
+  "tidyr",
   "dplyr",
   "dtplr",
   "duckplyr",
   "tictoc",
   "microbenchmark",
   "bench",
+  "lobstr",
+  "nanoparquet"
 ))

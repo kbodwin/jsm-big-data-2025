@@ -8,32 +8,13 @@ editor: source
 ```{r}
 library(tidyverse)
 library(glue)
+library(tictoc)
 ```
-
-
-## Demo
-
-Consider the following task:
-
-1.
-
-
-Here is a pipeline that accomplishes this task, but somewhat slowly:
-
-```{r}
-
-```
-
-### Step One: Find the problem chunk(s)
-
-### Step Two: Profile the processes
-
-### Step Three: Benchmark a solution
 
 
 ## Your Turn
 
-Find the slowdowns and errors in the following process:
+We will find the slowdowns in the following process:
 
 ```{r}
 
@@ -42,7 +23,7 @@ states <- c("ak", "al", "ar", "az", "wa", "wi", "wv", "wy")
 dat <- data.frame()
 
 for (state in states) {
-  my_files <- list.files(glue("./materials/data/raw_csvs/person/2021/{state}/"), full.names = TRUE)
+  my_files <- list.files(glue("../data/raw_csvs/person/2021/{state}/"), full.names = TRUE)
   
   for (file in my_files) {
     
@@ -55,16 +36,42 @@ for (state in states) {
   }
 }
 
+```
+
+```{r}
+
 dat |>
-  group_by(REGION, CIT, SEX) |>
-  summarize(
-    mean(parse_number(AGEP))
+  mutate(
+    age_groups = case_when(
+      AGEP < 18 ~ "Under 18",
+      AGEP < 65 ~ "18-64",
+      TRUE ~ "65+"
+    )
   ) |>
+  group_by(REGION, CIT, SEX, ST, age_groups) |>
+  summarize(
+    count = n()
+  ) |>
+  pivot_wider(names_from = age_groups,
+              values_from = count) |>
   filter(REGION == 3) 
+
 
 ```
 
+### Step One: Find the problem chunk(s)
 
-Jot down a few ideas for how you would speed it up.
+Use `tictoc()` to figure out which of the two steps is slowest.
+
+Use `system.time()` to figure out which part of the data read is slowest.
+
+### Step Two: Profile the processes
+
+Use `profviz()` to see where the slowdowns occur in the analysis pipeline.
+
+### Step Three: Benchmark a solution
+
+Try rearranging your analysis pipeline to be more efficient.  Compare this solution to the original.
+
 
 

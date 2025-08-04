@@ -4,7 +4,7 @@ execute:
   echo: true
 format: 
   revealjs:
-    footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
+    footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-big-data-2025/tree/main/materials)"
     theme: simple
     # scrollable: true
     embed-resources: true
