@@ -492,42 +492,42 @@
   {
     "objectID": "materials/activities/03-practice-arrow.html",
     "href": "materials/activities/03-practice-arrow.html",
-    "title": "Hands-on practice: Analysis with PUMS Data",
+    "title": "Hands-on practice: Using parquet, arrow, and duckdb",
     "section": "",
     "text": "ProblemsHintsSolution\n\n\n\nLoad the PUMS person data as an arrow dataset\nWhat are the dimensions of the dataset? Number of rows? Number of columns?\nExamine the dataset:\n\nWhat columns does the dataset have?\nWhat are the column types?\n\n\n\n\nYou can use arrow::open_dataset(...) to open a dataset. Treat the dataset like it’s a data frame, can you use the same functions that you are already familiar with?\n\n\n\nlibrary(arrow)\nlibrary(dplyr)\n\n# Open the PUMS dataset\npums_ds &lt;- open_dataset(\"~/PUMS/data/person\")\n\n# dimensions\nnrow(pums_ds)\nncol(pums_ds)\n\n# Examine the dataset\npums_ds\n\n# Examine schema\nschema(pums_ds)"
   },
   {
     "objectID": "materials/activities/03-practice-arrow.html#exercise-1-reading-partitioned-pums-data",
     "href": "materials/activities/03-practice-arrow.html#exercise-1-reading-partitioned-pums-data",
-    "title": "Hands-on practice: Analysis with PUMS Data",
+    "title": "Hands-on practice: Using parquet, arrow, and duckdb",
     "section": "",
     "text": "ProblemsHintsSolution\n\n\n\nLoad the PUMS person data as an arrow dataset\nWhat are the dimensions of the dataset? Number of rows? Number of columns?\nExamine the dataset:\n\nWhat columns does the dataset have?\nWhat are the column types?\n\n\n\n\nYou can use arrow::open_dataset(...) to open a dataset. Treat the dataset like it’s a data frame, can you use the same functions that you are already familiar with?\n\n\n\nlibrary(arrow)\nlibrary(dplyr)\n\n# Open the PUMS dataset\npums_ds &lt;- open_dataset(\"~/PUMS/data/person\")\n\n# dimensions\nnrow(pums_ds)\nncol(pums_ds)\n\n# Examine the dataset\npums_ds\n\n# Examine schema\nschema(pums_ds)"
   },
   {
     "objectID": "materials/activities/03-practice-arrow.html#exercise-2-basic-filtering-and-aggregation",
     "href": "materials/activities/03-practice-arrow.html#exercise-2-basic-filtering-and-aggregation",
-    "title": "Hands-on practice: Analysis with PUMS Data",
+    "title": "Hands-on practice: Using parquet, arrow, and duckdb",
     "section": "Exercise 2: Basic Filtering and Aggregation",
     "text": "Exercise 2: Basic Filtering and Aggregation\n\nProblemsHintSolution\n\n\n\nWhat was the population of Tennessee in 2018?\nWhat was the population of Tennessee over the last five years of available data?\n\n\n\nTry using familiar dplyr verbs: filter(), summarize(), et c.\n\n\n\nlibrary(arrow)\nlibrary(dplyr)\n\n# Open the PUMS dataset\npums_ds &lt;- open_dataset(\"~/PUMS/data/person\")\n\npums_ds |&gt;\n  filter(year == 2018, location == \"tn\") |&gt;\n  summarize(\n    n = n(),\n    population = sum(PWGTP)\n  ) |&gt;\n  collect()\n\npums_ds |&gt;\n  filter(location == \"tn\") |&gt;\n  group_by(year) |&gt;\n  summarize(\n    n = n(),\n    population = sum(PWGTP)\n  ) |&gt;\n  arrange(-year) |&gt;\n  slice_head(n = 5) |&gt;\n  collect()"
   },
   {
     "objectID": "materials/activities/03-practice-arrow.html#exercise-3-using-duckdb-with-pums-data",
     "href": "materials/activities/03-practice-arrow.html#exercise-3-using-duckdb-with-pums-data",
-    "title": "Hands-on practice: Analysis with PUMS Data",
+    "title": "Hands-on practice: Using parquet, arrow, and duckdb",
     "section": "Exercise 3: Using DuckDB with PUMS Data",
     "text": "Exercise 3: Using DuckDB with PUMS Data\n\nProblemsHintSolution\n\n\nFor each state, compute the minimum commute time and the maximum commute time. Return it in a long data frame (hint, you’ll need to use tidyr::pivot_longer here) with the columns: location, commute_metric (values: max_commute, min_commute), time.\nFor motivation: if you were trying to plot using ggplot2 and wanted both the minimums and the maximums to show up on the same plot.\n\n\nArrow’s query engine doesn’t support tidyr::pivot_longer. So you’ll need to use to_duckdb() and then use duckdb from there.\n\n\n\nlibrary(arrow)\nlibrary(duckdb)\nlibrary(tidyr)\n\n# Open the PUMS dataset\npums_ds &lt;- open_dataset(\"~/PUMS/data/person\")\n\npums_ds |&gt;\n  group_by(location) |&gt;\n  summarize(\n    max_commute = max(JWMNP, na.rm = TRUE),\n    min_commute = min(JWMNP, na.rm = TRUE)\n  ) |&gt;\n  to_duckdb() |&gt; \n  pivot_longer(!location, names_to = \"commute_metric\", values_to = \"time\") |&gt;\n  arrange(location) |&gt;\n  collect()"
   },
   {
     "objectID": "materials/activities/03-practice-arrow.html#challenge-formulate-your-own-analysis",
     "href": "materials/activities/03-practice-arrow.html#challenge-formulate-your-own-analysis",
-    "title": "Hands-on practice: Analysis with PUMS Data",
+    "title": "Hands-on practice: Using parquet, arrow, and duckdb",
     "section": "Challenge: Formulate Your Own Analysis",
     "text": "Challenge: Formulate Your Own Analysis\n\nChoose a research question:\n\nHow has commute time changed over the years?\nWhat’s the relationship between education and income?\nHow does housing cost burden vary by state?\nYour own question…\n\nImplement the analysis using:\n\nArrow Dataset operations\nDuckDB SQL queries\nData visualization\n\nCompare performance between approaches"
   },
   {
     "objectID": "materials/activities/03-practice-arrow.html#the-pums-dataset",
     "href": "materials/activities/03-practice-arrow.html#the-pums-dataset",
-    "title": "Hands-on practice: Analysis with PUMS Data",
+    "title": "Hands-on practice: Using parquet, arrow, and duckdb",
     "section": "The PUMS Dataset",
     "text": "The PUMS Dataset\ndetailed dataset description\n\nPublic Use Microdata Sample\n\nUS Census Bureau data\nIndividual person and household records\nAnonymized demographic information\nIncome, education, housing, commute, et c.\n\nDataset characteristics:\n\nMultiple years (2005-2022, sans 2020)\nAll US states and territories\n53 Million rows (person), 25 Million rows (household)\n200+ variables"
   },
