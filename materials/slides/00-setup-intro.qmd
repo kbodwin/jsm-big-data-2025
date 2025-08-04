@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Welcome!"
 format: 
   revealjs:
     footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
@@ -10,3 +10,230 @@ editor: source
 ---
 
 
+# Who are we? {background-color="#0F4C81"}
+
+## Jonathan Keane
+
+::::{.columns}
+
+::: {.column width="30%"}
+
+![](./images/jon.png){style="height: 300px;"}
+:::
+
+::: {.column width="70%"}
+
+- Engineering leader at Posit, PBC.
+
+- 15+ years building data tools in R and Python for scientific computing.
+
+- PMC member and maintainer of Apache Arrow; author of `dittodb`
+
+- Experienced with large-scale data analysis, modeling, and enterprise tools  
+
+:::
+
+::::
+
+## Tyson Barrett
+
+::::{.columns}
+
+::: {.column width="30%"}
+
+
+![](./images/tyson-headshot-rounded.png){style="height: 300px;"}
+
+:::
+
+::: {.column width="70%"}
+
+- Applied statistician at Highmark Health and Utah State University  
+- 15+ years of R programming and package development experience 
+
+- Maintainer of `data.table` and 3 other R packages  
+
+- Consultant on NSF grant supporting `data.table` infrastructure 
+
+- Works with large datasets (millions of rows, hundreds of columns)
+
+
+:::
+
+::::
+
+## Kelly Bodwin
+
+::::{.columns}
+
+::: {.column width="30%"}
+
+
+![](./images/kelly-headshot.png){style="height: 300px;"}
+
+:::
+
+::: {.column width="70%"}
+- Associate Professor of Statistics and Data Science at Cal Poly
+
+- Co-author of R packages `flair` and `tidyclust`  
+
+- Consultant on NSF grant supporting `data.table` infrastructure
+
+- Research experience with high-volume, in-memory data
+
+
+:::
+
+::::
+
+
+# Setup {background-color="#0F4C81"}
+
+## Setup
+
+:::{.incremental}
+
+* Make sure you have the [most recent version of R](https://cran.r-project.org/src/base/R-4).  (*Recommended minimum: R4.0*)
+
+* Make sure you have the [most recent version of RStudio](https://posit.co/download/rstudio-desktop/).  (*Recommended minimum: 2025 release.*)
+
+* (Positron is probably fine, but we haven't stress-tested that.)
+
+* *(Optional)* [Download all workshop materials.](https://github.com/kbodwin/jsm-big-data-2025/tree/main/materials)
+
+:::
+
+# Install some packages {background-color="#0F4C81"}
+
+## Installs
+
+(Also available as "installs.R" in the workshop materials repository.)
+
+```{r}
+install.packages("pak")
+pak::pak(c(
+  "data.table",
+  "arrow",
+  "duckdb",
+  "dplyr",
+  "dtplr",
+  "duckplyr",
+  "tictoc",
+  "microbenchmark",
+  "bench",
+))
+
+```
+
+
+# Get the Data {background-color="#0F4C81"}
+
+##  Easiest, quickest option
+
+[Download a subset of the data]:(https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip)
+
+* This subset only includes the person-level data for years 2005, 2018, 2021 and only for states Alaska, Alabama, Arkansas, Arizona, California, Washington, Wisconsin, West Virginia, and Wyoming.
+
+* Simply download it and unzip it into a directory called data in your working directory and you can run the examples in the workshop.
+
+## Longer, but full dataset option
+
+We also host a full version of the dataset in AWS S3.
+
+Once you have setup your [AWS account and CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html), download the data into a data directory to use:
+
+```
+aws s3 cp --recursive s3://scaling-arrow-pums/ ./data/
+```
+
+This is the full dataset, but does require that you setup your AWS CLI and wait for the dataset to be downloaded.
+
+
+
+
+# The Public Access Microdata dataset {background-color="#0F4C81"}
+
+## About the data
+
+:::{.incremental}
+* Collected by the United States Census Bureau as part of the American Community Survey
+* Disclosure protection — introduces noise to make it impossible to identify specific people or households
+* Covers: 2005--2022 using the 1-year estimates (sans 2020; COVID)
+* Split into **person** and **household**
+    * columns: person: 230, household: 188 
+    * rows: person: 53M, household: 25M
+:::
+
+## A few example variables
+
+:::{.incremental}
+* Person
+  * Language spoken at home (LANP)
+  * Travel time to work (JWMNP) 
+* Household
+  * Access to internat (ACCESS)
+  * Monthly rent (RNTP)
+* Weights 😵‍💫
+  * PWGTP and WGTP for weights
+:::
+
+## Format of the data
+
+:::{.incremental}
+* Released and available as CSV files (~90GB)
+* Uses survey-style coding 
+::: 
+
+. . .
+
+
+For this workshop:
+
+:::{.incremental}
+* Recoded the dataset 
+* Saved as parquet (~12GB) partitioned by year and state
+:::
+
+:::{.notes}
+survey-style coding is where categorical variables will be given a number and there is a separate look up table for the values. Additionally, there are frequently sentinel values that mean missing or "99 and greater"
+
+We have pulled the key into the actual data so you don't need to do the lookups and also converted numeric columns into integers, floats, etc. where appropriate.
+:::
+
+## Can I analyze all of PUMS?
+
+::: {.fragment style="margin-bottom: 2em; margin-top: 2em;"}
+Most analysis of PUMS data starts with subsetting the data. Either by state (or even smaller) or year and often both.
+:::
+
+
+::: {.fragment style="margin-bottom: 2em; margin-top: 2em;"}
+But with the tools we learn about in this workshop, we actually can analyze the whole dataset.
+:::
+
+
+## Caveat
+
+::: {.v-center-container style="font-size: 1.25em;"}
+Though we have not _purposefully_ altered this data, this data **should not be relied on** to be a perfect or even possibly accurate representation of the official PUMS dataset. 
+:::
+
+# Goals {background-color="#0F4C81"}
+
+## Goals of this Workshop
+
+:::{.incremental}
+
+1. Help you navigate **when** you need a speed-up trick and **which** tools will help you.
+
+2. Get you off the ground using `data.table` for **faster operations** on large data **fully in R**.
+
+3. Show you how to set up a **duckdb database** and use `arrow` and `duckplyr` to **partition** your analysis.
+
+4. Give you tools for a **unified workflow** of these tools.
+
+:::
+
+
+# Where are you from, what do you work on, and how do you hope this workshop will be useful to you? {background-color="#0F4C81"}
