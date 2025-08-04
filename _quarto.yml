@@ -27,7 +27,7 @@ website:
           text: "Using the data.table package"
         - href: materials/slides/03-arrow.qmd
           text: "Using arrow and duckdb"
-        - href: materials/slides/04-datatable.qmd
+        - href: materials/slides/04-workflow.qmd
           text: "Workflow: Putting it together"
       - text: Activities
         menu:
