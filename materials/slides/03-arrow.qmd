@@ -14,6 +14,10 @@ format:
           .extrapad {
               margin-top:1em  !important;
           }
+          .v-spacier {
+              margin-bottom: 2em; 
+              margin-top: 2em;
+          }
           </style>
 editor: source
 ---
@@ -60,15 +64,15 @@ editor: source
 
 ## Why should I care about data storage?
 
-::: {.fragment .extrapad}
+::: {.fragment .v-spacier}
 Data has to be represented somewhere, both during analysis and when storing.
 :::
 
-::: {.fragment .extrapad}
+::: {.fragment .v-spacier}
 The shape and characteristics of this representation has a huge impact on performance.
 :::
 
-::: {.fragment .extrapad}
+::: {.fragment .v-spacier}
 What if you could speed up a key part of your analysis by 30x and reduce your storage by 10x?
 :::
 
@@ -86,8 +90,10 @@ What if you could speed up a key part of your analysis by 30x and reduce your st
 |3 |Carol|45 |Chicago |
 ```
 
+::: {.extrapad}
 - Efficient for single record access
 - Efficient for appending
+:::
 :::
 
 ::: {.column width="50%"}
@@ -101,8 +107,10 @@ Age:   [25, 30, 45]
 City:  [New York, Boston, Chicago]
 ```
 
+::: {.extrapad}
 - Efficient for analytics
 - Better compression
+:::
 :::
 :::
 :::
@@ -136,7 +144,7 @@ Compression: this is because like-types are stored with like, so you get more fr
 And you use column-oriented dataframes already!
 :::
 
-::: {.fragment}
+::: {.fragment .extrapad}
 ... but still storing my data in a fundamentally row-oriented way. 
 :::
 
@@ -144,9 +152,9 @@ And you use column-oriented dataframes already!
 This isn't so bad if you're only talking about a small amount of data, transposing a few columns for a few rows is no big deal. But as data gets larger, or if you have to do this frequently, this process of transposing (AKA serialization) hurts.
 :::
 
-## The interconnection problem
+## The serialization problem
 
-![](images/copy-convert.png){.r-stretch}
+![](images/intro_copy_and_convert.png){.r-stretch}
 
 ::: {.notes}
 Many of these were operating in essentially column-oriented ways — but to transfer data ended up writting into row-oriented data structures, then read them back in to something that was column-oriented.
@@ -157,20 +165,27 @@ Many of these were operating in essentially column-oriented ways — but to tran
   - Serialization is a huge bottleneck
 :::
 
-## The interconnection problem
+## The serialization problem
 
-![](images/shared.png){.r-stretch}
+![](images/intro_arrow_adapter.png){.r-stretch}
 
 ## What is Apache Arrow?
 
-![](images/arrow-logo_vertical_black-txt_transparent-bg.png){width=50%}
+![](images/arrow-logo.png){.absolute top=0 right=0 width="200"}
 
 ::: {.incremental}
-- **Cross-language development platform for in-memory data**
+- **Cross-language development platform for**   
+    **in-memory data**
   - Consistent in-memory columnar data format
   - Language-independent
   - Zero-copy reads
+:::
 
+## What is Apache Arrow?
+
+![](images/arrow-logo.png){.absolute top=0 right=0 width="200"}
+
+::: {.incremental}
 - **Benefits:**
   - Seamless data interchange between systems
   - Fast analytical processing
@@ -179,18 +194,24 @@ Many of these were operating in essentially column-oriented ways — but to tran
 
 ## What is Apache Parquet?
 
-![](images/Apache_Parquet_logo.svg){width=40%}
+![](images/Apache_Parquet_logo.svg){.absolute top=0 right=0 width="400"}
 
 ::: {.incremental}
 - **Open-source columnar storage format**
   - Created by Twitter and Cloudera in 2013
   - Part of the Apache Software Foundation
+:::
 
+## What is Apache Parquet?
+
+![](images/Apache_Parquet_logo.svg){.absolute top=0 right=0 width="400"}
+
+::: {.incremental}
 - **Features:**
   - Columnar storage
-  - Efficient compression
   - Explicit schema 
   - Statistical metadata
+  - Efficient compression
 :::
 
 ## Reading a File
@@ -243,24 +264,6 @@ The parquet file is 62 MB
 It's even faster with altrep (0.186 s), but that's cheating! Also, if we read into an arrow table rather than a dataframe: 0.1 second 
 :::
 
-# Deep Dive into Parquet
-
-## What is Parquet?
-
-::: {.incremental}
-- **Schema metadata**
-  - Self-describing format
-  - Preserves column types
-  - Type-safe data interchange
-
-- **Encodings**
-  - **Dictionary** — Particularly effective for categorical data
-  - **Run-length encoding** - Efficient storage of sequential repeated values
-
-- **Advanced compression**
-  - Column-specific compression algorithms
-  - Both dictionary and value compression
-:::
 
 ## Exercise
 
@@ -285,7 +288,7 @@ df_parquet <- read_parquet("numeric.parquet")
 Are there any differences?
 :::
 
-## Exercise
+## Exercise (answer)
 
 :::{.columns}
 :::{.column}
@@ -327,7 +330,7 @@ Are there any differences?
 :::
 :::
 
-## Exercise
+## Exercise (answer)
 
 :::{.columns}
 :::{.column}
@@ -369,7 +372,33 @@ Are there any differences?
 :::
 :::
 
-## Inside a Parquet File
+# Deep Dive into Parquet
+
+## What is inside a Parquet file?
+
+::: {.incremental}
+- **Schema metadata**
+  - Self-describing format
+  - Preserves column types
+  - Type-safe data interchange
+
+- **The data itself**
+  - Encodings
+  - Advanced compression
+:::
+
+:::{.notes}
+Encodings:
+  - **Dictionary** — Particularly effective for categorical data
+  - **Run-length encoding** - Efficient storage of sequential repeated values
+
+Advanced compression:   
+
+  - Column-specific compression algorithms
+  - Both dictionary and value compression
+:::
+
+## Structure of a Parquet File
 
 ![](images/files_formats_parquet_bw.png){width=100%}
 
@@ -446,7 +475,11 @@ ggplot(data, aes(x = Format, y = Time_Seconds, color = Format)) +
 - **With Parquet:**
   - Read only needed columns from disk
   - Significant performance benefit for wide tables
+:::
 
+## Reading Efficiency: Selecting Columns
+
+::: {.incremental}
 ::: {.fragment}
 ```{r}
 #| eval: false
@@ -488,7 +521,6 @@ system.time({
   - Full-featured reader
   - Support for datasets
   - Integration with Arrow ecosystem
-  - Optimized for analytics workloads
 :::
 
 ## nanoparquet vs. arrow Reader
@@ -535,7 +567,7 @@ system.time({
 **Languages with native Parquet support:**
 
 ::: {.incremental}
-- R (via arrow)
+- R (via arrow, nanoparquet)
 - Python (via pyarrow, pandas)
 - Java
 - C++
@@ -549,13 +581,12 @@ system.time({
 **Systems with Parquet integration:**
 
 ::: {.incremental}
-- Apache Spark
-- Apache Hadoop
-- Apache Drill
+- DuckDB
+- Google BigQuery
 - Snowflake
 - Amazon Athena
-- Google BigQuery
-- DuckDB
+- Apache Spark
+- Apache Hadoop
 :::
 
 # Working with Parquet files with Arrow in R
@@ -608,27 +639,28 @@ df_filtered <- open_dataset("CA_person_2021.parquet") |>
 ```{r}
 #| eval: false
 # Create an Arrow Table
-df <- read_parquet("CA_person_2021.parquet", as_data_frame = FALSE)
+table <- read_parquet("CA_person_2021.parquet", as_data_frame = FALSE)
 
 # Use dplyr verbs with arrow tables
-df |>
+table |>
   filter(AGEP >= 16) |>
   summarize(
     mean_commute_time = sum(JWMNP * PWGTP, na.rm = TRUE) /
       sum(PWGTP),
     count = n()
-  ) 
+  ) |>
+  collect()
 ```
 
 ::: {.notes}
-The dataframe is backed by altrep, actually. But generally functions like any other dataframe.
+Without as_data_frame = FALSE: the dataframe is backed by altrep, actually. But generally functions like any other dataframe.
 :::
 
 # Querying Parquet with Different Engines
 
 ## Introduction to DuckDB
 
-![](https://duckdb.org/images/duckdb-circle.svg){width=25%}
+![](https://duckdb.org/images/duckdb-circle.svg){.absolute top=0 right=0 width="200"}
 
 ::: {.incremental}
 - **Analytical SQL database system**
@@ -636,9 +668,8 @@ The dataframe is backed by altrep, actually. But generally functions like any ot
   - Column oriented
   - In-process query execution
 
-- **Key features:**
+- **Features:**
   - Direct Parquet querying
-  - Vectorized query execution
   - Parallel processing
   - Zero-copy integration with arrow
 :::
@@ -651,6 +682,7 @@ The zero-copy integration with arrow is because DuckDB uses basically the same f
 
 ```{r}
 #| eval: false
+#| code-line-numbers: "|9-15"
 library(duckdb)
 
 con <- dbConnect(duckdb())
@@ -674,6 +706,7 @@ dbDisconnect(con, shutdown = TRUE)
 
 ```{r}
 #| eval: false
+#| code-line-numbers: "|9-17"
 library(duckplyr)
 
 # Read data with Arrow
@@ -701,6 +734,7 @@ duckplyr is a drop-in replacement for dplyr, using duckdb as a backend
 
 ```{r}
 #| eval: false
+#| code-line-numbers: "|10-13"
 library(arrow)
 library(data.table)
 
@@ -716,33 +750,15 @@ pums_dt[AGEP >= 16,
     count = .N)]
 ```
 
-## Arrow Query Execution
-
-```{r}
-#| eval: false
-# Create an Arrow Dataset
-pums_ds <- open_dataset("pums_dataset_dir/")
-
-# Execute query with Arrow
-result <- pums_ds |>
-  filter(AGEP >= 16) |>
-  group_by(ST) |>
-  summarize(
-    avg_commute_time = mean(JWMNP, na.rm = TRUE),
-    count = n()
-  ) |>
-  arrange(desc(avg_commute_time)) |>
-  collect()
-```
-
 ## Demo: Seamless Integration Arrow ↔ DuckDB
 
 ```{r}
 #| eval: false
-df <- read_parquet("CA_person_2021.parquet")
+#| code-line-numbers: "|6"
+table <- read_parquet("CA_person_2021.parquet", as_data_frame = FALSE)
 
 # Use dplyr verbs with arrow tables
-df |>
+table |>
   filter(AGEP >= 16) |>
   to_duckdb() |>
   summarize(
@@ -757,7 +773,7 @@ df |>
 ## Understanding Arrow Datasets vs. Tables
 
 ::: columns
-::: {.column width="50%"}
+::: {.fragment .column width="50%"}
 **Arrow Table**
 
 - In-memory data structure
@@ -767,7 +783,7 @@ df |>
 - Good for single file data
 :::
 
-::: {.column width="50%"}
+::: {.fragment .column width="50%"}
 **Arrow Dataset**
 
 - Collection of files
@@ -778,7 +794,7 @@ df |>
 :::
 :::
 
-## Demo: Opening and Querying Multi-file Datasets
+## Demo: Querying Multi-file Datasets
 
 ```{r}
 #| eval: false
@@ -800,19 +816,21 @@ pums_ds |>
   collect()
 ```
 
+:::{.notes}
+Mention Acero engine in C++
+:::
+
 ## Lazy Evaluation and Query Optimization
 
 ::: {.incremental}
 - **Lazy evaluation workflow:**
-  1. Define operations (filter, group, summarize)
-  2. Arrow builds an execution plan
-  3. Optimizes the plan (predicate pushdown, etc.)
-  4. Only reads necessary data from disk
-  5. Executes when `collect()` is called
+  - Define operations (filter, group, summarize)
+  - Optimizes the plan (predicate pushdown, et c.)
+  - Only reads necessary data from disk
+  - Executes when `collect()` is called
 
 - **Benefits:**
-  - Minimizes memory usage
-  - Reduces I/O operations
+  - Minimizes memory usage + reduces I/O 
   - Leverages Arrow's native compute functions
 :::
 
@@ -863,6 +881,8 @@ pums_ds |>
 ```
 
 :::{.notes}
+Around ~110MB
+
 `Sys.getpid()`
 `nettop -p X`
 :::
@@ -883,11 +903,9 @@ pums_ds |>
   - Easier management of large datasets
 :::
 
-![](https://arrow.apache.org/docs/r/_images/dataset-parquet-partition.svg){width=50%}
+## Hive vs. Non-Hive Partitioning {.smaller}
 
-## Hive vs. Non-Hive Partitioning
-
-::: columns
+::: columns 
 ::: {.column width="50%"}
 **Hive Partitioning**
 
@@ -931,15 +949,13 @@ pums_ds |>
 
 ::: {.incremental}
 - **Choose partition columns wisely:**
-  - Low to medium cardinality
   - Commonly used in filters
-  - Balanced data distribution
+  - Low to medium cardinality
 
 - **Common partition dimensions:**
   - Time (year, month, day)
   - Geography (country, state, region)
   - Category (product type, department)
-  - Source (system, sensor)
 :::
 
 ## Partitioning in Practice: Writing Datasets
@@ -965,7 +981,7 @@ ca_pums_data |>
   )
 ```
 
-## Demo: repartitioning the whole dataset
+## Demo: Repartitioning the whole dataset
 ```{r}
 #| eval: false
 pums_data <- open_dataset("data/person")
@@ -986,6 +1002,11 @@ pums_data |>
   )
 ```
 
+:::{.notes}
+   user  system elapsed 
+386.530  65.862 115.496 
+:::
+
 ## Best Practices for Partition Design
 
 ::: {.incremental}
@@ -997,10 +1018,6 @@ pums_data |>
 - **Consider query patterns:**
   - Partition by commonly filtered columns
   - Balance between read speed and write complexity
-
-- **Nested partitioning considerations:**
-  - Order from highest to lowest selectivity
-  - Limit partition depth (2-3 levels typically sufficient)
 :::
 
 ## Partitioning Performance Impact
@@ -1008,7 +1025,7 @@ pums_data |>
 ```{r}
 #| echo: false
 #| fig-width: 8
-#| fig-height: 3
+#| fig-height: 2.75
 library(ggplot2)
 
 data <- data.frame(
@@ -1043,22 +1060,27 @@ open_dataset("<path/to/data>") |>
 - Column-oriented storage formats like Parquet provide massive 
 performance advantages for analytical workloads (30x speed, 10x smaller
 files)
-- Apache Arrow enables seamless data interchange between systems without
-costly serialization/deserialization
-- Multiple query engines (arrow, DuckDB, data.table) offer flexibility
-depending on your analysis needs, all using modern formats like Parquet
 - Partitioning strategies help manage large datasets effectively when
 working with data too big for memory
 :::
 
 ## Conclusion
 
+:::{.incremental}
+- Apache Arrow enables seamless data interchange between systems without
+costly serialization/deserialization
+- Multiple query engines (arrow, DuckDB, data.table) offer flexibility
+depending on your analysis needs, all using modern formats like Parquet
+:::
+
+## Conclusion
+
 **Resources:**
 
-- Workshop materials: [GitHub Repository](https://github.com/your-repo)
+- Workshop materials: [GitHub Repository](https://github.com/kbodwin/jsm-big-data-2025)
 - Arrow documentation: [arrow.apache.org/docs/r](https://arrow.apache.org/docs/r/)
 - Parquet: [parquet.apache.org](https://parquet.apache.org/)
 - DuckDB: [duckdb.org](https://duckdb.org/)
-- Book: [Scaling up with Arrow and R](https://arrow-user2022.github.io/scaling-r-with-arrow/)
+- Book: [Scaling up with Arrow and R](https://arrowrbook.com/)
 
 **Questions?**

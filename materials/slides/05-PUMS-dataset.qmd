@@ -15,6 +15,10 @@ format:
                 align-items: center;
                 height: 90%;
             }
+            .v-spacier {
+                margin-bottom: 2em; 
+                margin-top: 2em;
+            }
             </style>
 editor: source
 ---
@@ -65,20 +69,28 @@ For this workshop:
 :::{.notes}
 survey-style coding is where categorical variables will be given a number and there is a separate look up table for the values. Additionally, there are frequently sentinel values that mean missing or "99 and greater"
 
-We have pulled the key into the actual data so you don't need to do the lookups and also converted numeric columns into integers, floats, etc. where appropriate.
+We have pulled the key into the actual data so you don't need to do the lookups and also converted numeric columns into integers, floats, et c. where appropriate.
 :::
 
 ## Can I analyze all of PUMS?
 
-::: {.fragment style="margin-bottom: 2em; margin-top: 2em;"}
+::: {.fragment .v-spacier}
 Most analysis of PUMS data starts with subsetting the data. Either by state (or even smaller) or year and often both.
 :::
 
 
-::: {.fragment style="margin-bottom: 2em; margin-top: 2em;"}
+::: {.fragment .v-spacier}
 But with the tools we learn about in this workshop, we actually can analyze the whole dataset.
 :::
 
+
+## What can I do? 
+
+![](images/pums-data-manip-agg-plot-n_commuters-html-1.png){fig-align="center"}
+
+## What can I do? 
+
+![](images/pums-data-manip-agg-plot-commute_time-html-1.png){fig-align="center"}
 
 ## Caveat
 
