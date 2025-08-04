@@ -101,7 +101,7 @@ In `j` we can grab individual variables or a list of them (using the `.()`)
 **Fast to type, fast to read**
 
 ```{r}
-#| code-line-numbers: "1-6|8-13"
+#| code-line-numbers: "1-6|8-14"
 # Base R approach
 pums_df <- as.data.frame(pums)
 subset_data <- pums_df[pums$ST == "California/CA" & pums$year == 2022, ]
@@ -268,16 +268,18 @@ microbenchmark::microbenchmark(
 
 ## 3. Memory Efficient
 
-::: {.large}
+"Whenever I’m about to do something, I think, “would an idiot do that?” And if they would, I do not do that thing."
+
+<br>
+
 Quick History Lesson on Shallow/Deep Copies
-:::
+
 
 . . .
 
 ```{r}
 # Create a copy (memory inefficient)
 pums_nocopy <- pums
-pums_nocopy[, age_decade := floor(AGEP / 10) * 10]
 
 # Modify by reference (memory efficient)
 pums[, age_decade := floor(AGEP / 10) * 10]
@@ -358,18 +360,18 @@ The `set*()` family of functions modify data.table objects directly in memory wi
 #| echo: true
 #| eval: false
 # setnames() - rename columns by reference
-setnames(pums_multi, "AGEP", "age") 
-setnames(pums_multi, c("old1", "old2"), c("new1", "new2"))
+setnames(pums, "AGEP", "age") 
+setnames(pums, c("old1", "old2"), c("new1", "new2"))
 
 # setkey() - set keys for fast operations
-setkey(pums_multi, ST, year)  # Fast lookups and joins
+setkey(pums, ST, year)  # Fast lookups and joins
 
 # setorder() - sort by reference
-setorder(pums_multi, ST, -AGEP)  # Sort by state, then age descending
+setorder(pums, ST, -AGEP)  # Sort by state, then age descending
 
 # set() - general purpose setter
-set(pums_multi, i = 1L, j = "AGEP", value = 99L)  # Set specific cell
-set(pums_multi, j = "new_col", value = 0L)        # Add column with default value
+set(pums, i = 1L, j = "AGEP", value = 99L)  # Set specific cell
+set(pums, j = "new_col", value = 0L)        # Add column with default value
 ```
 
 
@@ -382,11 +384,22 @@ set(pums_multi, j = "new_col", value = 0L)        # Add column with default valu
 ## What will this do?
 
 ```{r}
+#| eval: false
 pums2 = pums
-names(pums2)[1] <- "id"
+setnames(pums2, old = "SPORDER", new = "id")
+```
+
+## What will this do? {auto-animate="true"}
+
+```{r}
+pums2 = pums
+setnames(pums2, old = "SPORDER", new = "id")
+names(pums)
 ```
 
 ## What creates a copy besides `copy()`
+
+<br>
 
 1. When you subset the data (select columns or filter rows)
 2. Change a data.table to a data.frame or tibble
@@ -398,9 +411,12 @@ names(pums2)[1] <- "id"
 
 "I'm not superstitious, but I am a little stitious."
 
+<br>
+
 **Stable and backward compatible**
 
 **Key principles:**
+
 - Backward compatibility maintained
 - New features don't break existing code
 - Clear deprecation warnings when needed
@@ -410,11 +426,12 @@ names(pums2)[1] <- "id"
 
 **Active development and strong ecosystem**
 
+- **New Governance**: As part of a NSF grant, new expansive governance
 - **GitHub**: 3,500+ stars, active issues and PRs
-- **CRAN**: Over 1,000 reverse dependencies
+- **CRAN**: Over 2,000 reverse dependencies
 - **Stack Overflow**: 15,000+ questions tagged with data.table
 - **Documentation**: Comprehensive vignettes and examples
-- **Extensions**: dtplyr, data.table.express, and more
+- **Extensions**: dtplyr, data.table.express, tidyfast, tidytable, and more
 
 ```r
 # Getting help
@@ -430,21 +447,20 @@ browseVignettes("data.table")
 
 ### Joins
 ```{r}
-#| echo: true
-#| eval: false
 # Load household data for comparison
-household_data <- open_dataset("data/household") |>
+household_data <- open_dataset(here::here("data/household")) |>
   filter(year >= 2020, location %in% c("ca", "tx", "ny")) |>
-  collect() |>
-  as.data.table()
+  collect()
+setDT(household_data)
 
 # Create state-year summary from household data
 household_summary <- household_data[, 
   .(avg_income = mean(HINCP, na.rm = TRUE)), 
-  by = .(ST, year)]
+  by = .(ST, year)
+]
 
 # Join person and household summaries
-pums_multi[household_summary, on = .(ST, year)]
+pums[household_summary, on = c("ST", "year")] # merge(pums, household_summary, by = c("ST", "year"))
 ```
 
 
@@ -452,17 +468,20 @@ pums_multi[household_summary, on = .(ST, year)]
 
 ### Reshaping
 ```{r}
-#| echo: true
-#| eval: false
 # Pivot longer - select key demographics
-pums_long <- melt(pums_multi, 
-                  id.vars = c("ST", "year", "SERIALNO"),
-                  measure.vars = c("AGEP", "PWGTP", "PINCP"))
+pums_long <- melt(
+  pums, 
+  id.vars = c("ST", "year", "SERIALNO"),
+  measure.vars = c("AGEP", "PWGTP", "PINCP")
+)
+pums_long
 
 # Pivot wider - average by state/year
-pums_summary <- pums_multi[, .(avg_age = mean(AGEP, na.rm = TRUE),
-                               avg_income = mean(PINCP, na.rm = TRUE)), 
-                           by = .(ST, year)]
+pums_summary <- pums[, 
+  .(avg_age = mean(AGEP, na.rm = TRUE),
+    avg_income = mean(PINCP, na.rm = TRUE)), 
+  by = .(ST, year)
+]
 dcast(pums_summary, ST ~ year, value.var = "avg_age")
 ```
 
@@ -472,31 +491,43 @@ dcast(pums_summary, ST ~ year, value.var = "avg_age")
 
 ### Rolling operations
 ```{r}
-#| echo: true
-#| eval: false
 # Population change over time by state
-pums_yearly <- pums_multi[, .(pop = sum(PWGTP)), by = .(ST, year)]
+pums_yearly <- pums[, .(pop = sum(PWGTP)), by = .(ST, year)]
 setkey(pums_yearly, ST, year)
 
 # Calculate 2-year rolling average (limited years available)
 pums_yearly[, pop_2yr_avg := frollmean(pop, 2), by = ST]
-print(pums_yearly)
+pums_yearly
 ```
-
 
 ## Feature Rich
 
-### Advanced grouping
+### Rolling Joins
+
 ```{r}
-#| echo: true
-#| eval: false
-# Multiple grouping operations
-pums_multi[ST %in% c("California/CA", "Texas/TX", "New York/NY"), 
-           .(pop = sum(PWGTP),
-             avg_age = weighted.mean(AGEP, PWGTP, na.rm = TRUE),
-             median_income = median(PINCP[PINCP > 0], na.rm = TRUE)), 
-           by = .(ST, year)]
+benefit_thresholds <- data.table(
+  age_threshold = c(18, 25, 35, 50, 62, 67),
+  benefit_type = c("Youth", "Young Adult", "Adult", "Mid-Career", "Pre-Retirement", "Senior"),
+  max_benefit = c(500, 800, 1200, 1500, 2000, 2500)
+)
+setkey(benefit_thresholds, age_threshold)
+benefit_thresholds
 ```
+
+. . . 
+
+
+```{r}
+# Rolling join to assign benefits based on nearest age threshold
+pums[, benefit_category := benefit_thresholds[
+  .(AGEP), 
+  benefit_type, 
+  roll = -Inf
+]]
+pums[, .(AGEP, benefit_category, ins_type, location)]
+```
+
+roll = "nearest" or roll = +Inf are also possible
 
 
 ## Feature Rich
@@ -506,24 +537,18 @@ pums_multi[ST %in% c("California/CA", "Texas/TX", "New York/NY"),
 **Essential data.table operators for efficient data manipulation**
 
 ```{r}
-#| echo: true
-#| eval: false
 # .N - Number of rows in each group
-pums_multi[, .N, by = ST]  # Count rows by state
+pums[, .N, by = ST]  # Count rows by state
 
 # .SD - Subset of Data (all columns except grouping)
-pums_multi[, lapply(.SD, mean, na.rm = TRUE), 
-           by = ST, .SDcols = c("AGEP", "PINCP")]
+pums[, names(.SD) := lapply(.SD, mean, na.rm = TRUE), by = ST, .SDcols = c("AGEP", "PINCP")]
+pums[, .(ST, AGEP, PINCP)]
 
 # .BY - List of grouping variables
-pums_multi[, .(mean_age = mean(AGEP), 
-               state = .BY[[1]]), by = ST]
+pums[, .(mean_age = mean(AGEP), state = gsub("/.*$", "", .BY)), by = ST]
 
 # .I - Row indices 
-pums_multi[, .I[which.max(AGEP)], by = ST]  # Index of oldest person per state
-
-# .() or list() - Create columns in j
-pums_multi[, .(pop = sum(PWGTP), avg_age = mean(AGEP)), by = ST]
+pums[, .I[which.max(AGEP)], by = ST]  # Index of oldest person per state
 ```
 
 
@@ -534,23 +559,25 @@ pums_multi[, .(pop = sum(PWGTP), avg_age = mean(AGEP)), by = ST]
 **Specialized operators for complex operations**
 
 ```{r}
-#| echo: true
-#| eval: false
 # .EACHI - For each item in i (useful with joins)
-household_summary[pums_multi, on = .(ST, year), .EACHI]
+household_summary[pums, on = .(ST, year), mean(AGEP), by = .EACHI]
 
 # .GRP - Group counter (1, 2, 3, ...)
-pums_multi[, .(grp_num = .GRP, pop = sum(PWGTP)), by = ST]
+pums[, .(grp_num = .GRP, pop = sum(PWGTP)), by = ST]
 
 # Multiple .SD operations with .SDcols
-pums_multi[, {
-  numeric_cols <- .SD[, sapply(.SD, is.numeric)]
-  list(means = lapply(.SD[, ..numeric_cols], mean, na.rm = TRUE),
-       medians = lapply(.SD[, ..numeric_cols], median, na.rm = TRUE))
-}, by = ST, .SDcols = c("AGEP", "PINCP", "PWGTP")]
+pums[, {
+    means <- lapply(.SD, mean, na.rm = TRUE)
+    medians <- lapply(.SD, median, na.rm = TRUE)
+    vars <- names(.SD)
+    .(vars, means, medians)
+  }, 
+  by = ST, 
+  .SDcols = c("AGEP", "PINCP", "PWGTP")
+]
 
 # Chaining with operators
-pums_multi[year == 2022][, .N, by = ST][order(-N)]
+pums[year == 2022][, .N, by = ST][order(-N)]
 ```
 
 
@@ -563,42 +590,23 @@ library(dtplyr)
 
 pums_dt <- pums |> 
   lazy_dt() |> 
-  select(id, age_groups, year) |> 
+  select(PINCP, age_groups, year) |> 
   group_by(age_groups, year) |> 
-  summarise()
+  summarise(avg_tot_income = mean(PINCP)) |> 
+  collect()  # or as.data.table() will collect it too
+pums_dt
+
+pums |> 
+  lazy_dt() |> 
+  select(PINCP, age_groups, year) |> 
+  group_by(age_groups, year) |> 
+  summarise(avg_tot_income = mean(PINCP)) |> 
+  show_query()
 ```
 
 
 
-## Getting Started
-
-**Installation and basic setup**
-
-```{r}
-#| echo: true
-#| eval: false
-# Install data.table and arrow
-install.packages(c("data.table", "arrow"))
-
-# Load libraries
-library(data.table)
-library(arrow)
-
-# Load partitioned PUMS data
-pums_dt <- open_dataset("data/person") |>
-  filter(year == 2022, location == "ca") |>
-  collect() |>
-  as.data.table()
-
-# Or convert existing data.frame
-dt <- as.data.table(your_data)
-
-# Set keys for performance
-setkey(pums_dt, ST, PUMA)
-```
-
-
-## Key Takeaways
+## Review
 
 1. **Learn the `DT[i, j, by]` syntax** - it's the foundation
 2. **Use keys** for fast subsetting and joins
@@ -608,6 +616,7 @@ setkey(pums_dt, ST, PUMA)
 6. **Check the documentation** - excellent vignettes available
 
 **Resources:**
+
 - Official vignettes: `vignette("datatable-intro")`
 - GitHub: https://github.com/Rdatatable/data.table
 - Stack Overflow: [data.table] tag
@@ -618,6 +627,7 @@ setkey(pums_dt, ST, PUMA)
 **Ready to make your data analysis faster and more efficient!**
 
 Try these exercises with the PUMS dataset:
+
 1. Calculate population by age group for your home state
 2. Find the fastest growing states between 2010-2022
 3. Compare median income across education levels
