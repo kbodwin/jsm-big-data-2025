@@ -529,7 +529,7 @@ pums[
 pums[, .(AGEP, benefit_category, ins_type, location)]
 ```
 
-roll = "nearest" or roll = +Inf are also possible
+`roll = "nearest"` or `roll = +Inf` are also possible
 
 
 ## Feature Rich
