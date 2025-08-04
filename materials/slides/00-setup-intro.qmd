@@ -131,7 +131,7 @@ pak::pak(c(
 
 ##  Easiest, quickest option
 
-[Download a subset of the data]:(https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip)
+[Download a subset of the data](https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip)
 
 * This subset only includes the person-level data for years 2005, 2018, 2021 and only for states Alaska, Alabama, Arkansas, Arizona, California, Washington, Wisconsin, West Virginia, and Wyoming.
 
