@@ -152,7 +152,7 @@ And you use column-oriented dataframes already!
 This isn't so bad if you're only talking about a small amount of data, transposing a few columns for a few rows is no big deal. But as data gets larger, or if you have to do this frequently, this process of transposing (AKA serialization) hurts.
 :::
 
-## The interconnection problem
+## The serialization problem
 
 ![](images/copy-convert.png){.r-stretch}
 
@@ -165,7 +165,7 @@ Many of these were operating in essentially column-oriented ways — but to tran
   - Serialization is a huge bottleneck
 :::
 
-## The interconnection problem
+## The serialization problem
 
 ![](images/shared.png){.r-stretch}
 
@@ -209,9 +209,9 @@ Many of these were operating in essentially column-oriented ways — but to tran
 ::: {.incremental}
 - **Features:**
   - Columnar storage
-  - Efficient compression
   - Explicit schema 
   - Statistical metadata
+  - Efficient compression
 :::
 
 ## Reading a File
@@ -264,31 +264,6 @@ The parquet file is 62 MB
 It's even faster with altrep (0.186 s), but that's cheating! Also, if we read into an arrow table rather than a dataframe: 0.1 second 
 :::
 
-# Deep Dive into Parquet
-
-## What is in a Parquet file?
-
-::: {.incremental}
-- **Schema metadata**
-  - Self-describing format
-  - Preserves column types
-  - Type-safe data interchange
-
-- **The data itself**
-  - Encodings
-  - Advanced compression
-:::
-
-:::{.notes}
-Encodings:
-  - **Dictionary** — Particularly effective for categorical data
-  - **Run-length encoding** - Efficient storage of sequential repeated values
-
-Advanced compression:   
-
-  - Column-specific compression algorithms
-  - Both dictionary and value compression
-:::
 
 ## Exercise
 
@@ -395,6 +370,32 @@ Are there any differences?
 10       10      10 10     
 ```
 :::
+:::
+
+# Deep Dive into Parquet
+
+## What is inside a Parquet file?
+
+::: {.incremental}
+- **Schema metadata**
+  - Self-describing format
+  - Preserves column types
+  - Type-safe data interchange
+
+- **The data itself**
+  - Encodings
+  - Advanced compression
+:::
+
+:::{.notes}
+Encodings:
+  - **Dictionary** — Particularly effective for categorical data
+  - **Run-length encoding** - Efficient storage of sequential repeated values
+
+Advanced compression:   
+
+  - Column-specific compression algorithms
+  - Both dictionary and value compression
 :::
 
 ## Structure of a Parquet File
@@ -566,7 +567,7 @@ system.time({
 **Languages with native Parquet support:**
 
 ::: {.incremental}
-- R (via arrow)
+- R (via arrow, nanoparquet)
 - Python (via pyarrow, pandas)
 - Java
 - C++
@@ -580,13 +581,12 @@ system.time({
 **Systems with Parquet integration:**
 
 ::: {.incremental}
-- Apache Spark
-- Apache Hadoop
-- Apache Drill
+- DuckDB
+- Google BigQuery
 - Snowflake
 - Amazon Athena
-- Google BigQuery
-- DuckDB
+- Apache Spark
+- Apache Hadoop
 :::
 
 # Working with Parquet files with Arrow in R
@@ -639,20 +639,21 @@ df_filtered <- open_dataset("CA_person_2021.parquet") |>
 ```{r}
 #| eval: false
 # Create an Arrow Table
-df <- read_parquet("CA_person_2021.parquet", as_data_frame = FALSE)
+table <- read_parquet("CA_person_2021.parquet", as_data_frame = FALSE)
 
 # Use dplyr verbs with arrow tables
-df |>
+table |>
   filter(AGEP >= 16) |>
   summarize(
     mean_commute_time = sum(JWMNP * PWGTP, na.rm = TRUE) /
       sum(PWGTP),
     count = n()
-  ) 
+  ) |>
+  collect()
 ```
 
 ::: {.notes}
-The dataframe is backed by altrep, actually. But generally functions like any other dataframe.
+Without as_data_frame = FALSE: the dataframe is backed by altrep, actually. But generally functions like any other dataframe.
 :::
 
 # Querying Parquet with Different Engines
@@ -749,39 +750,15 @@ pums_dt[AGEP >= 16,
     count = .N)]
 ```
 
-## Arrow Query Execution
-
-```{r}
-#| eval: false
-#| code-line-numbers: "|4-13"
-# Load as an Arrow Dataset
-pums_ds <- open_dataset("pums_dataset_dir/")
-
-# Execute query with Arrow
-result <- pums_ds |>
-  filter(AGEP >= 16) |>
-  group_by(ST) |>
-  summarize(
-    avg_commute_time = mean(JWMNP, na.rm = TRUE),
-    count = n()
-  ) |>
-  arrange(desc(avg_commute_time)) |>
-  collect()
-```
-
-:::{.notes}
-Mention Acero engine in C++
-:::
-
 ## Demo: Seamless Integration Arrow ↔ DuckDB
 
 ```{r}
 #| eval: false
 #| code-line-numbers: "|6"
-df <- read_parquet("CA_person_2021.parquet")
+table <- read_parquet("CA_person_2021.parquet", as_data_frame = FALSE)
 
 # Use dplyr verbs with arrow tables
-df |>
+table |>
   filter(AGEP >= 16) |>
   to_duckdb() |>
   summarize(
@@ -817,7 +794,7 @@ df |>
 :::
 :::
 
-## Demo: Opening and Querying Multi-file Datasets
+## Demo: Querying Multi-file Datasets
 
 ```{r}
 #| eval: false
@@ -838,6 +815,10 @@ pums_ds |>
   ) |>
   collect()
 ```
+
+:::{.notes}
+Mention Acero engine in C++
+:::
 
 ## Lazy Evaluation and Query Optimization
 
@@ -900,6 +881,8 @@ pums_ds |>
 ```
 
 :::{.notes}
+Around ~110MB
+
 `Sys.getpid()`
 `nettop -p X`
 :::
@@ -998,7 +981,7 @@ ca_pums_data |>
   )
 ```
 
-## Demo: repartitioning the whole dataset
+## Demo: Repartitioning the whole dataset
 ```{r}
 #| eval: false
 pums_data <- open_dataset("data/person")
@@ -1018,6 +1001,11 @@ pums_data |>
     path = "pums_by_age/"
   )
 ```
+
+:::{.notes}
+   user  system elapsed 
+386.530  65.862 115.496 
+:::
 
 ## Best Practices for Partition Design
 

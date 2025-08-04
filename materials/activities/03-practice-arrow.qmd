@@ -3,23 +3,7 @@ title: "Hands-on practice: Analysis with PUMS Data"
 editor: source
 ---
 
-## The PUMS Dataset
-
-[detailed dataset description](https://scaling-arrow-pums.s3.us-east-1.amazonaws.com/readme.html)
-
-- **Public Use Microdata Sample**
-  - US Census Bureau data
-  - Individual person and household records
-  - Anonymized demographic information
-  - Income, education, housing, commute, etc.
-
-- **Dataset characteristics:**
-  - Multiple years (2005-2022, sans 2020)
-  - All US states and territories
-  - 53 Million rows (person), 25 Million rows (household)
-  - 200+ variables
-
-## Reading Partitioned PUMS Data
+## Exercise 1: Reading Partitioned PUMS Data
 
 ::: panel-tabset
 ### Problems
@@ -56,26 +40,30 @@ schema(pums_ds)
 ```
 :::
 
-## Exercise 1: Basic Filtering and Aggregation
+## Exercise 2: Basic Filtering and Aggregation
 
 ::: panel-tabset
 ### Problems
+
+* What was the population of California in 2018?
 
 ### Solution
 
 ```{r}
 #| eval: false
-# Calculate average income by state for 2021
-result1 <- pums_ds |>
-  filter(year == 2021) |>
-  filter(PINCP > 0) |>  # Positive income only
-  group_by(location) |>
+library(arrow)
+library(dplyr)
+
+# Open the PUMS dataset
+pums_ds <- open_dataset("~/PUMS/data/person")
+
+
+result <- pums_ds |>
+  filter(year == 2018, location == "ca") |>
   summarize(
-    avg_income = mean(PINCP, na.rm = TRUE),
-    median_income = quantile(PINCP, 0.5, na.rm = TRUE),
-    n = n()
+    n = n(),
+    population = sum(PWGTP)
   ) |>
-  arrange(desc(avg_income)) |>
   collect()
 
 # View results
@@ -146,3 +134,20 @@ dbDisconnect(con, shutdown = TRUE)
   - Data visualization
 
 - **Compare performance between approaches**
+
+
+## The PUMS Dataset
+
+[detailed dataset description](https://scaling-arrow-pums.s3.us-east-1.amazonaws.com/readme.html)
+
+- **Public Use Microdata Sample**
+  - US Census Bureau data
+  - Individual person and household records
+  - Anonymized demographic information
+  - Income, education, housing, commute, etc.
+
+- **Dataset characteristics:**
+  - Multiple years (2005-2022, sans 2020)
+  - All US states and territories
+  - 53 Million rows (person), 25 Million rows (household)
+  - 200+ variables
