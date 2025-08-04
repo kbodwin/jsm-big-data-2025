@@ -62,7 +62,7 @@ This is the full dataset, but does require that you setup your AWS CLI and wait 
 
 # Workshop Materials
 
-Workshop materials can be found in the github repository [jsm-large-data](https://github.com/kbodwin/jsm-large-data/materials)!
+Workshop materials can be found in the github repository [jsm-large-data](https://github.com/kbodwin/jsm-big-data-2025/materials)!
 
 ------------------------------------------------------------------------
 
