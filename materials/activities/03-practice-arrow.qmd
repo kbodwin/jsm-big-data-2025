@@ -45,8 +45,8 @@ schema(pums_ds)
 ::: panel-tabset
 ### Problems
 
-* What was the population of Tennessee in 2018?
-* What was the population of Tennessee over the last five years of available data?
+* What was the population of California in 2018?
+* What was the population of California over the last five years of available data?
 
 ### Hint
 
@@ -63,7 +63,7 @@ library(dplyr)
 pums_ds <- open_dataset("~/PUMS/data/person")
 
 pums_ds |>
-  filter(year == 2018, location == "tn") |>
+  filter(year == 2018, location == "ca") |>
   summarize(
     n = n(),
     population = sum(PWGTP)
@@ -71,7 +71,7 @@ pums_ds |>
   collect()
 
 pums_ds |>
-  filter(location == "tn") |>
+  filter(location == "ca") |>
   group_by(year) |>
   summarize(
     n = n(),
