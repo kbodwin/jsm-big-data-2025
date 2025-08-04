@@ -1,5 +1,5 @@
 ---
-title: "Hands-on practice: Analysis with PUMS Data"
+title: "Hands-on practice: Using parquet, arrow, and duckdb"
 editor: source
 ---
 
