@@ -26,6 +26,20 @@ jobs:
           r-version: 'release'
           use-public-rspm: true
 
+  - uses: r-lib/actions/setup-r-dependencies@v2
+    with:
+      cache-version: 2
+      extra-packages: |
+        any::arrow
+        any::data.table
+        any::dtplyr
+        any::duckplyr
+        any::ggplot2
+        any::knitr
+        any::nanoparquet
+        any::rmarkdown
+        
+
       - uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Render Quarto Project
