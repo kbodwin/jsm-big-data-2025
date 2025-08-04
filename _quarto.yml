@@ -27,7 +27,7 @@ website:
           text: "Using the data.table package"
         - href: materials/slides/03-arrow.qmd
           text: "parquet, arrow, duckdb"
-        - href: materials/slides/04-datatable.qmd
+        - href: materials/slides/04-workflow.qmd
           text: "Workflow: Putting it together"
       - text: Activities
         menu:
@@ -35,9 +35,9 @@ website:
           text: "Get started with your data"
         - href: materials/activities/02-practice-datatable.qmd
           text: "Practice using data.table"
-        - href: materials/activities/practice-arrow.qmd
+        - href: materials/activities/03-practice-arrow.qmd
           text: "Practice using parquet, arrow, and duckdb"
-        - href: materials/activities/practice-workflow.qmd
+        - href: materials/activities/04-practice-workflow.qmd
           text: "Put it all together"
        
 
