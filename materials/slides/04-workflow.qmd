@@ -5,6 +5,7 @@ format:
     footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-big-data-2025/tree/main/materials)"
     theme: [simple]
     embed-resources: true
+    incremental: true
 editor: source
 ---
 
@@ -17,7 +18,7 @@ editor: source
 
 * (Even if the csvs can't be read into R!)
 
-* Think about hive partitions that make sense.
+* Think about data partitions that make sense.
 
 * `arrow` syntax mimics `dplyr` for some table operations.
 
@@ -27,9 +28,28 @@ editor: source
 
 ## `duckdb` workflow
 
-* 
+* Use `duckdb` to set up an "invisible" databalse.
+
+* Use `dbConnect()`, `dbExecute()` etc. to send SQL queries to the database.
+
+* Or, use `duckplyr` to write `dplyr`-like code that translates to SQL.
+
+* Be strategic - run *filters* and *summaries* on the database, then `collect()` into R for more analysis.
 
 
 
 # Analyze with `data.table` {background-color="#0F4C81"}
+
+## `data.table` workflow
+
+* Use `fread()` for csvs, or `arrow` functions for parquets, or `lazy_dt()` to convert collected data frames.
+
+* Full dataset is in R - no databases or partitioning here!
+
+* Use `dtplyr` for `dplyr`-like code that translates to `data.table`.
+
+* Especially fast for: 
+    + split-apply-combine on many groups
+    + rolling windows
+    + pivoting
 
