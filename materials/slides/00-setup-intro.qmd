@@ -111,6 +111,7 @@ editor: source
 (Also available as "installs.R" in the workshop materials repository.)
 
 ```{r}
+#| eval: false
 install.packages("pak")
 pak::pak(c(
   "data.table",

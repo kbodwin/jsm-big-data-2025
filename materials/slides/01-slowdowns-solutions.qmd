@@ -110,6 +110,8 @@ D. Is it just a lot of data?  `duckdb` and calculate in partitions.
 
 # Step 1. Timing Chunks {background-color="#0F4C81"}
 
+## The `tictoc()` package
+
 
 
 # Step 2. Profiling Processes {background-color="#0F4C81"}

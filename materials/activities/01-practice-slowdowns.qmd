@@ -5,6 +5,12 @@ editor: source
 
 ## Setup
 
+```{r}
+library(tidyverse)
+library(glue)
+```
+
+
 ## Demo
 
 Consider the following task:
@@ -27,9 +33,34 @@ Here is a pipeline that accomplishes this task, but somewhat slowly:
 
 ## Your Turn
 
-Find the slowdown in the following pipeline:
+Find the slowdowns and errors in the following process:
 
 ```{r}
+
+states <- c("ak", "al", "ar", "az", "wa", "wi", "wv", "wy")
+
+dat <- data.frame()
+
+for (state in states) {
+  my_files <- list.files(glue("./materials/data/raw_csvs/person/2021/{state}/"), full.names = TRUE)
+  
+  for (file in my_files) {
+    
+    temp <- read_csv(file) |>
+      mutate_all(as.character)
+    
+    dat <- dat |>
+      bind_rows(temp)
+    
+  }
+}
+
+dat |>
+  group_by(REGION, CIT, SEX) |>
+  summarize(
+    mean(parse_number(AGEP))
+  ) |>
+  filter(REGION == 3) 
 
 ```
 
