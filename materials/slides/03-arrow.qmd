@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "parquet, arrow, duckdb"
 execute:
   echo: true
 format: 
@@ -8,14 +8,15 @@ format:
     theme: simple
     # scrollable: true
     embed-resources: true
+    include-in-header:
+      - text: |
+          <style>
+          .extrapad {
+              margin-top:1em  !important;
+          }
+          </style>
 editor: source
 ---
-
-<style>
-.extrapad {
-    margin-top:1em  !important;
-}
-</style>
 
 ## Section Overview
 
@@ -1034,127 +1035,7 @@ open_dataset("<path/to/data>") |>
   collect()
 ```
 
-
-# Hands-on Workshop: Analysis with PUMS Data
-
-## The PUMS Dataset
-
-::: {.incremental}
-- **Public Use Microdata Sample**
-  - US Census Bureau data
-  - Individual person and household records
-  - Anonymized demographic information
-  - Income, education, housing, commute, etc.
-
-- **Dataset characteristics:**
-  - Multiple years (2005-2022)
-  - All US states and territories
-  - 53 Million rows (person only)
-  - 200+ variables
-:::
-
-## Reading Partitioned PUMS Data
-
-```{r}
-#| eval: false
-library(arrow)
-library(dplyr)
-
-# Open the PUMS dataset
-pums_path <- "data/person"  # Partitioned by year and location
-pums_ds <- open_dataset(pums_path)
-
-# Examine the dataset
-pums_ds
-
-# Look at the first few file paths
-head(pums_ds$files)
-
-# Examine schema
-pums_ds$schema
-```
-
-## Exercise 1: Basic Filtering and Aggregation
-
-```{r}
-#| eval: false
-# Calculate average income by state for 2021
-result1 <- pums_ds |>
-  filter(year == 2021) |>
-  filter(PINCP > 0) |>  # Positive income only
-  group_by(location) |>
-  summarize(
-    avg_income = mean(PINCP, na.rm = TRUE),
-    median_income = quantile(PINCP, 0.5, na.rm = TRUE),
-    n = n()
-  ) |>
-  arrange(desc(avg_income)) |>
-  collect()
-
-# View results
-head(result1)
-```
-
-## Exercise 2: Using DuckDB with PUMS Data
-
-```{r}
-#| eval: false
-library(arrow)
-library(duckdb)
-library(DBI)
-
-# Open the PUMS dataset with Arrow
-pums_ds <- open_dataset("data/person")
-
-# Filter to just 2021 data for Washington
-wa_2021 <- pums_ds |>
-  filter(year == 2021, location == "wa") |>
-  collect()
-
-# Create DuckDB connection
-con <- dbConnect(duckdb())
-
-# Register Arrow Table with DuckDB
-duckdb::duckdb_register_arrow(con, "pums_wa", wa_2021)
-
-# Run SQL query
-result <- dbGetQuery(con, "
-  SELECT 
-    CASE 
-      WHEN AGEP < 18 THEN 'Under 18'
-      WHEN AGEP < 30 THEN '18-29'
-      WHEN AGEP < 45 THEN '30-44'
-      WHEN AGEP < 65 THEN '45-64'
-      ELSE '65+'
-    END AS age_group,
-    AVG(JWMNP) AS avg_commute_time,
-    COUNT(*) AS n
-  FROM pums_wa
-  WHERE JWMNP > 0
-  GROUP BY age_group
-  ORDER BY age_group
-")
-
-# Disconnect when done
-dbDisconnect(con, shutdown = TRUE)
-```
-
-## Challenge: Formulate Your Own Analysis
-
-::: {.incremental}
-- **Choose a research question:**
-  - How has commute time changed over the years?
-  - What's the relationship between education and income?
-  - How does housing cost burden vary by state?
-  - Your own question...
-
-- **Implement the analysis using:**
-  - Arrow Dataset operations
-  - DuckDB SQL queries
-  - Data visualization
-
-- **Compare performance between approaches**
-:::
+# [Hands-on practice: Analysis with PUMS Data](../activities/03-practice-arrow.qmd)
 
 ## Conclusion
 
