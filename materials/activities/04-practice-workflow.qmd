@@ -15,7 +15,7 @@ Rewrite it using your new skills to be clean, readable, and efficient.
 Then use your favorite benchmarking or speed testing approach from unit 1 to demonstrate that the new pipeline is indeed faster.
 
 ```{r}
-
+#| eval: false
 
 states <- c("ak", "al", "ar", "az", "wa", "wi", "wv", "wy")
 

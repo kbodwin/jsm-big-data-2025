@@ -1,0 +1,19 @@
+{
+  "hash": "c800ae009a4f63e1599b9a818fbfdcca",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Practice a Smooth Workflow\"\neditor: source\n---\n\n\n\n\n\n## Setup\n\n\n## Your Turn\n\nThe following pipeline is disorganized, syntactically inconsistent, and of course, slow.\n\nRewrite it using your new skills to be clean, readable, and efficient.\n\nThen use your favorite benchmarking or speed testing approach from unit 1 to demonstrate that the new pipeline is indeed faster.\n\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nstates <- c(\"ak\", \"al\", \"ar\", \"az\", \"wa\", \"wi\", \"wv\", \"wy\")\n\ndat <- data.frame()\n\nfor (state in states) {\n  my_files <- list.files(glue(\"./materials/data/raw_csvs/person/2021/{state}/\"), full.names = TRUE)\n  \n  for (file in my_files) {\n    \n    temp <- read_csv(file) |>\n      mutate_all(as.character)\n    \n    dat <- dat |>\n      bind_rows(temp)\n    \n  }\n}\n\n\ndat[year == 2021][, .(avg_age = mean(AGEP)), by = ST][order(-avg_age)]\n\n\n\ndat |>\n  group_by(location) |>\n  summarize(\n    max_commute = max(JWMNP, na.rm = TRUE),\n    min_commute = min(JWMNP, na.rm = TRUE)\n  ) |> \n  pivot_longer(!location, names_to = \"commute_metric\", values_to = \"time\") |>\n  arrange(location) \n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<link href=\"../../site_libs/pagedtable-1.1/css/pagedtable.css\" rel=\"stylesheet\" />\n<script src=\"../../site_libs/pagedtable-1.1/js/pagedtable.js\"></script>\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
