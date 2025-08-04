@@ -154,7 +154,7 @@ This isn't so bad if you're only talking about a small amount of data, transposi
 
 ## The serialization problem
 
-![](images/copy-convert.png){.r-stretch}
+![](images/intro_copy_and_convert.png){.r-stretch}
 
 ::: {.notes}
 Many of these were operating in essentially column-oriented ways — but to transfer data ended up writting into row-oriented data structures, then read them back in to something that was column-oriented.
@@ -167,7 +167,7 @@ Many of these were operating in essentially column-oriented ways — but to tran
 
 ## The serialization problem
 
-![](images/shared.png){.r-stretch}
+![](images/intro_arrow_adapter.png){.r-stretch}
 
 ## What is Apache Arrow?
 
