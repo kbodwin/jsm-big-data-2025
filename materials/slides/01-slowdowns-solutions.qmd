@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Finding slowdowns and solutions."
 format: 
   revealjs:
     footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
@@ -8,5 +8,113 @@ format:
     embed-resources: true
 editor: source
 ---
+
+# "In-Memory Data" {background-color="#0F4C81"}
+
+## You have data that...
+
+* You want to analyze: summarize, visualize, model, etc.
+
+* Can be downloaded somewhere on your local machine.
+
+* Can be read fully into R...
+
+. . .
+
+ ... but maybe very slowly...
+ 
+. . . 
+
+ ... and maybe only if it's a *parquet* file.
+
+
+
+## What if it's bigger than that?
+
+* It's probably in a **cloud database**. (e.g. AWS)
+
+* Do the *individual* files/tables fit on disk?
+
+* Can you query *subsets* of the data and fit those on disk?
+
+
+# Vocab {background-color="#0F4C81"}
+
+## Key Terms
+
+* Data is **in-memory** if
+
+* Data is **on disk** if
+
+* A **csv** file is a file type for storing data as *comma separated text*.
+
+* A **parquet** file is a file type for storing data as *column information*.
+
+
+
+## Key Packages
+
+* `data.table` optimizes calculations **in R** on data frames, via algorithmic cleverness and **C implementation**.
+
+* `duckdb` creates a **SQL database** locally and lets you use **R Code** to execute **SQL operations**.
+
+* `arrow` provides ways to read and write **parquet files** and to move data around between `data.table`, `duckdb`, and other formats.
+
+## Helper Packages
+
+* Friends of `data.table`:  
+    + `dtplyr`, `tidyfast` for `dplyr` syntax
+    + `mlr3` for machine learning
+
+* Friends of `duckdb`:
+    + `duckplyr` for for `dplyr` syntax
+    + `odbc`,  for connection to cloud databases
+
+* Other speed/efficiency helpers: 
+    + `vroom` for reading data
+    + `polars` in python
+
+
+
+
+# Possible Slowdowns {background-color="#0F4C81"}
+
+## 1. My data reads in slowly.
+
+A. Use `data.table::fread()` instead.
+
+B. Write it to a *parquet* version; use `arrow::read_parquet()`.
+
+C. Put it in a *duckdb*; use queries to avoid reading the whole dataset at once.
+
+
+## 2. One of my pipelines is a little slow, and I do it many times
+
+A. Are you using *vectorized* functions (or could you)?
+
+B. Use `data.table` - do the small speed gains add up?
+
+C. Can you move some subsetting steps to `duckdb`?
+
+
+## 3. One of my pipelines is very slow.
+
+A. Can you re-order the pipeline?
+
+B. Are you doing a *split-apply-combine* over many groups?  `data.table`!
+
+C. Are you doing a *subsetting* process? `data.table` or `duckdb`!
+
+D. Is it just a lot of data?  `duckdb` and calculate in partitions.
+
+
+# Step 1. Timing Chunks {background-color="#0F4C81"}
+
+
+
+# Step 2. Profiling Processes {background-color="#0F4C81"}
+
+
+# Step 3. Benchmarking Solutions {background-color="#0F4C81"}
 
 
