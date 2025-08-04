@@ -62,7 +62,7 @@ execute:
 
 ## Loading PUMS Data
 
-Preview to next section with Jonathon about `arrow`:
+Preview to next section with Jonathan about `arrow`:
 
 ```{r}
 library(data.table)
