@@ -30,13 +30,7 @@ jobs:
         with:
           cache-version: 2
           extra-packages: |
-            any::arrow
-            any::data.table
-            any::dtplyr
-            any::duckplyr
-            any::ggplot2
             any::knitr
-            any::nanoparquet
             any::rmarkdown
         
 
