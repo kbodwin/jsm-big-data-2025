@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Towards a Smooth Workflow"
 format: 
   revealjs:
     footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
@@ -8,4 +8,10 @@ format:
 editor: source
 ---
 
+
+# Organize the data as *parquets* with `arrow` {background-color="#0F4C81"}
+
+# Collect efficiently with `duckdb` {background-color="#0F4C81"}
+
+# Analyze with `data.table` {background-color="#0F4C81"}
 

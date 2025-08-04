@@ -7,4 +7,17 @@ editor: source
 
 ## Demo
 
+Here is the full workflow from the slides, all in `dplyr`-like syntax:
+
 ## Your Turn
+
+The following pipeline is disorganized, syntactically inconsistent, and of course, slow.
+
+Rewrite it using your new skills to be clean, readable, and efficient.
+
+Then use your favorite benchmarking or speed testing approach from unit 1 to demonstrate that the new pipeline is indeed faster.
+
+```{r}
+
+```
+
