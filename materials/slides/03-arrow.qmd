@@ -1081,6 +1081,6 @@ depending on your analysis needs, all using modern formats like Parquet
 - Arrow documentation: [arrow.apache.org/docs/r](https://arrow.apache.org/docs/r/)
 - Parquet: [parquet.apache.org](https://parquet.apache.org/)
 - DuckDB: [duckdb.org](https://duckdb.org/)
-- Book: [Scaling up with Arrow and R](https://arrowrbook.com/)
-
-**Questions?**
+- Book: [Scaling up with Arrow and R](https://arrowrbook.com/)    
+    20% Discount on a [physical book](https://www.routledge.com/) with code: **25AFLY2**
+    
