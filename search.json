@@ -46,7 +46,7 @@
     "href": "materials/slides/05-PUMS-dataset.html#format-of-the-data",
     "title": "Introduction to PUMS",
     "section": "Format of the data",
-    "text": "Format of the data\n\nReleased and available as CSV files (~90GB)\nUses survey-style coding\n\n\nFor this workshop:\n\nRecoded the dataset\nSaved as parquet (~12GB) partitioned by year and state\n\n\nsurvey-style coding is where categorical variables will be given a number and there is a separate look up table for the values. Additionally, there are frequently sentinel values that mean missing or “99 and greater”\nWe have pulled the key into the actual data so you don’t need to do the lookups and also converted numeric columns into integers, floats, etc. where appropriate."
+    "text": "Format of the data\n\nReleased and available as CSV files (~90GB)\nUses survey-style coding\n\n\nFor this workshop:\n\nRecoded the dataset\nSaved as parquet (~12GB) partitioned by year and state\n\n\nsurvey-style coding is where categorical variables will be given a number and there is a separate look up table for the values. Additionally, there are frequently sentinel values that mean missing or “99 and greater”\nWe have pulled the key into the actual data so you don’t need to do the lookups and also converted numeric columns into integers, floats, et c. where appropriate."
   },
   {
     "objectID": "materials/slides/05-PUMS-dataset.html#can-i-analyze-all-of-pums",
@@ -54,6 +54,20 @@
     "title": "Introduction to PUMS",
     "section": "Can I analyze all of PUMS?",
     "text": "Can I analyze all of PUMS?\n\nMost analysis of PUMS data starts with subsetting the data. Either by state (or even smaller) or year and often both.\n\n\nBut with the tools we learn about in this workshop, we actually can analyze the whole dataset."
+  },
+  {
+    "objectID": "materials/slides/05-PUMS-dataset.html#what-can-i-do",
+    "href": "materials/slides/05-PUMS-dataset.html#what-can-i-do",
+    "title": "Introduction to PUMS",
+    "section": "What can I do?",
+    "text": "What can I do?"
+  },
+  {
+    "objectID": "materials/slides/05-PUMS-dataset.html#what-can-i-do-1",
+    "href": "materials/slides/05-PUMS-dataset.html#what-can-i-do-1",
+    "title": "Introduction to PUMS",
+    "section": "What can I do?",
+    "text": "What can I do?"
   },
   {
     "objectID": "materials/slides/05-PUMS-dataset.html#caveat",
@@ -81,7 +95,7 @@
     "href": "materials/slides/03-arrow.html#row-vs.-column-oriented-storage",
     "title": "parquet, arrow, duckdb",
     "section": "Row vs. Column-Oriented Storage",
-    "text": "Row vs. Column-Oriented Storage\n\n\nRow-oriented\n|ID|Name |Age|City    |\n|--|-----|---|--------|\n|1 |Alice|25 |New York|\n|2 |Bob  |30 |Boston  |\n|3 |Carol|45 |Chicago |\n\nEfficient for single record access\nEfficient for appending\n\n\n\nColumn-oriented\nID:    [1, 2, 3]\nName:  [Alice, Bob, Carol]\nAge:   [25, 30, 45]\nCity:  [New York, Boston, Chicago]\n\nEfficient for analytics\nBetter compression\n\n\n\n\nRow oriented formats are super familiar: CSVs as well as many databases\nBut Column-orientation isn’t something that is new and cutting edge. In fact, every single one of you use a system that stores data this way: R data frames(!)"
+    "text": "Row vs. Column-Oriented Storage\n\n\nRow-oriented\n|ID|Name |Age|City    |\n|--|-----|---|--------|\n|1 |Alice|25 |New York|\n|2 |Bob  |30 |Boston  |\n|3 |Carol|45 |Chicago |\n\n\nEfficient for single record access\nEfficient for appending\n\n\n\n\nColumn-oriented\nID:    [1, 2, 3]\nName:  [Alice, Bob, Carol]\nAge:   [25, 30, 45]\nCity:  [New York, Boston, Chicago]\n\n\nEfficient for analytics\nBetter compression\n\n\n\n\n\nRow oriented formats are super familiar: CSVs as well as many databases\nBut Column-orientation isn’t something that is new and cutting edge. In fact, every single one of you use a system that stores data this way: R data frames(!)"
   },
   {
     "objectID": "materials/slides/03-arrow.html#why-column-oriented-storage",
@@ -98,32 +112,46 @@
     "text": "Column-Oriented Data is great\n\nAnd you use column-oriented dataframes already!\n\n\n… but still storing my data in a fundamentally row-oriented way.\n\n\nThis isn’t so bad if you’re only talking about a small amount of data, transposing a few columns for a few rows is no big deal. But as data gets larger, or if you have to do this frequently, this process of transposing (AKA serialization) hurts."
   },
   {
-    "objectID": "materials/slides/03-arrow.html#the-interconnection-problem",
-    "href": "materials/slides/03-arrow.html#the-interconnection-problem",
+    "objectID": "materials/slides/03-arrow.html#the-serialization-problem",
+    "href": "materials/slides/03-arrow.html#the-serialization-problem",
     "title": "parquet, arrow, duckdb",
-    "section": "The interconnection problem",
-    "text": "The interconnection problem\n\n\nMany of these were operating in essentially column-oriented ways — but to transfer data ended up writting into row-oriented data structures, then read them back in to something that was column-oriented.\nMoving data between representations is hard - Different formats, requirements, and limitations - Compatibility issues - Serialization is a huge bottleneck"
+    "section": "The serialization problem",
+    "text": "The serialization problem\n\n\nMany of these were operating in essentially column-oriented ways — but to transfer data ended up writting into row-oriented data structures, then read them back in to something that was column-oriented.\nMoving data between representations is hard - Different formats, requirements, and limitations - Compatibility issues - Serialization is a huge bottleneck"
   },
   {
-    "objectID": "materials/slides/03-arrow.html#the-interconnection-problem-1",
-    "href": "materials/slides/03-arrow.html#the-interconnection-problem-1",
+    "objectID": "materials/slides/03-arrow.html#the-serialization-problem-1",
+    "href": "materials/slides/03-arrow.html#the-serialization-problem-1",
     "title": "parquet, arrow, duckdb",
-    "section": "The interconnection problem",
-    "text": "The interconnection problem"
+    "section": "The serialization problem",
+    "text": "The serialization problem"
   },
   {
     "objectID": "materials/slides/03-arrow.html#what-is-apache-arrow",
     "href": "materials/slides/03-arrow.html#what-is-apache-arrow",
     "title": "parquet, arrow, duckdb",
     "section": "What is Apache Arrow?",
-    "text": "What is Apache Arrow?\n\n\nCross-language development platform for in-memory data\n\nConsistent in-memory columnar data format\nLanguage-independent\nZero-copy reads\n\nBenefits:\n\nSeamless data interchange between systems\nFast analytical processing\nEfficient memory usage"
+    "text": "What is Apache Arrow?\n\n\nCross-language development platform for\nin-memory data\n\nConsistent in-memory columnar data format\nLanguage-independent\nZero-copy reads"
+  },
+  {
+    "objectID": "materials/slides/03-arrow.html#what-is-apache-arrow-1",
+    "href": "materials/slides/03-arrow.html#what-is-apache-arrow-1",
+    "title": "parquet, arrow, duckdb",
+    "section": "What is Apache Arrow?",
+    "text": "What is Apache Arrow?\n\n\nBenefits:\n\nSeamless data interchange between systems\nFast analytical processing\nEfficient memory usage"
   },
   {
     "objectID": "materials/slides/03-arrow.html#what-is-apache-parquet",
     "href": "materials/slides/03-arrow.html#what-is-apache-parquet",
     "title": "parquet, arrow, duckdb",
     "section": "What is Apache Parquet?",
-    "text": "What is Apache Parquet?\n\n\nOpen-source columnar storage format\n\nCreated by Twitter and Cloudera in 2013\nPart of the Apache Software Foundation\n\nFeatures:\n\nColumnar storage\nEfficient compression\nExplicit schema\nStatistical metadata"
+    "text": "What is Apache Parquet?\n\n\nOpen-source columnar storage format\n\nCreated by Twitter and Cloudera in 2013\nPart of the Apache Software Foundation"
+  },
+  {
+    "objectID": "materials/slides/03-arrow.html#what-is-apache-parquet-1",
+    "href": "materials/slides/03-arrow.html#what-is-apache-parquet-1",
+    "title": "parquet, arrow, duckdb",
+    "section": "What is Apache Parquet?",
+    "text": "What is Apache Parquet?\n\n\nFeatures:\n\nColumnar storage\nExplicit schema\nStatistical metadata\nEfficient compression"
   },
   {
     "objectID": "materials/slides/03-arrow.html#reading-a-file",
@@ -140,13 +168,6 @@
     "text": "Reading a File\nAs a Parquet file\n\nlibrary(arrow)\noptions(arrow.use_altrep = FALSE)\n\nsystem.time({\n  df &lt;- read_parquet(\"CA_person_2021.parquet\")\n})\n\n\n   user  system elapsed \n  1.017   0.207   0.568 \n\n\nThe parquet file is 62 MB\nIt’s even faster with altrep (0.186 s), but that’s cheating! Also, if we read into an arrow table rather than a dataframe: 0.1 second"
   },
   {
-    "objectID": "materials/slides/03-arrow.html#what-is-parquet",
-    "href": "materials/slides/03-arrow.html#what-is-parquet",
-    "title": "parquet, arrow, duckdb",
-    "section": "What is Parquet?",
-    "text": "What is Parquet?\n\nSchema metadata\n\nSelf-describing format\nPreserves column types\nType-safe data interchange\n\nEncodings\n\nDictionary — Particularly effective for categorical data\nRun-length encoding - Efficient storage of sequential repeated values\n\nAdvanced compression\n\nColumn-specific compression algorithms\nBoth dictionary and value compression"
-  },
-  {
     "objectID": "materials/slides/03-arrow.html#exercise",
     "href": "materials/slides/03-arrow.html#exercise",
     "title": "parquet, arrow, duckdb",
@@ -154,25 +175,32 @@
     "text": "Exercise\n\ndata &lt;- tibble::tibble(\n  integers = 1:10,\n  doubles = as.numeric(1:10),\n  strings = sprintf(\"%02d\", 1:10)\n)\n\nwrite.csv(data, \"numeric_base.csv\", row.names = FALSE)\nwrite_csv_arrow(data, \"numeric_arrow.csv\")\nwrite_parquet(data, \"numeric.parquet\")\n\ndf_csv &lt;- read.csv(\"numeric_base.csv\")\ndf_csv_arrow &lt;- read_csv_arrow(\"numeric_arrow.csv\")\ndf_parquet &lt;- read_parquet(\"numeric.parquet\")\n\n\nAre there any differences?"
   },
   {
-    "objectID": "materials/slides/03-arrow.html#exercise-1",
-    "href": "materials/slides/03-arrow.html#exercise-1",
+    "objectID": "materials/slides/03-arrow.html#exercise-answer",
+    "href": "materials/slides/03-arrow.html#exercise-answer",
     "title": "parquet, arrow, duckdb",
-    "section": "Exercise",
-    "text": "Exercise\n\n\n&gt; df_csv_arrow\n# A tibble: 10 × 3\n   integers doubles strings\n      &lt;int&gt;   &lt;int&gt;   &lt;int&gt;\n 1        1       1       1\n 2        2       2       2\n 3        3       3       3\n 4        4       4       4\n 5        5       5       5\n 6        6       6       6\n 7        7       7       7\n 8        8       8       8\n 9        9       9       9\n10       10      10      10\n\n&gt; df_parquet\n# A tibble: 10 × 3\n   integers doubles strings\n      &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  \n 1        1       1 01     \n 2        2       2 02     \n 3        3       3 03     \n 4        4       4 04     \n 5        5       5 05     \n 6        6       6 06     \n 7        7       7 07     \n 8        8       8 08     \n 9        9       9 09     \n10       10      10 10"
+    "section": "Exercise (answer)",
+    "text": "Exercise (answer)\n\n\n&gt; df_csv_arrow\n# A tibble: 10 × 3\n   integers doubles strings\n      &lt;int&gt;   &lt;int&gt;   &lt;int&gt;\n 1        1       1       1\n 2        2       2       2\n 3        3       3       3\n 4        4       4       4\n 5        5       5       5\n 6        6       6       6\n 7        7       7       7\n 8        8       8       8\n 9        9       9       9\n10       10      10      10\n\n&gt; df_parquet\n# A tibble: 10 × 3\n   integers doubles strings\n      &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  \n 1        1       1 01     \n 2        2       2 02     \n 3        3       3 03     \n 4        4       4 04     \n 5        5       5 05     \n 6        6       6 06     \n 7        7       7 07     \n 8        8       8 08     \n 9        9       9 09     \n10       10      10 10"
   },
   {
-    "objectID": "materials/slides/03-arrow.html#exercise-2",
-    "href": "materials/slides/03-arrow.html#exercise-2",
+    "objectID": "materials/slides/03-arrow.html#exercise-answer-1",
+    "href": "materials/slides/03-arrow.html#exercise-answer-1",
     "title": "parquet, arrow, duckdb",
-    "section": "Exercise",
-    "text": "Exercise\n\n\n&gt; df_csv_arrow\n# A tibble: 10 × 3\n   integers doubles strings\n      &lt;int&gt;   &lt;int&gt;   &lt;int&gt;\n 1        1       1       1\n 2        2       2       2\n 3        3       3       3\n 4        4       4       4\n 5        5       5       5\n 6        6       6       6\n 7        7       7       7\n 8        8       8       8\n 9        9       9       9\n10       10      10      10\n\n&gt; df_parquet\n# A tibble: 10 × 3\n   integers doubles strings\n      &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  \n 1        1       1 01     \n 2        2       2 02     \n 3        3       3 03     \n 4        4       4 04     \n 5        5       5 05     \n 6        6       6 06     \n 7        7       7 07     \n 8        8       8 08     \n 9        9       9 09     \n10       10      10 10"
+    "section": "Exercise (answer)",
+    "text": "Exercise (answer)\n\n\n&gt; df_csv_arrow\n# A tibble: 10 × 3\n   integers doubles strings\n      &lt;int&gt;   &lt;int&gt;   &lt;int&gt;\n 1        1       1       1\n 2        2       2       2\n 3        3       3       3\n 4        4       4       4\n 5        5       5       5\n 6        6       6       6\n 7        7       7       7\n 8        8       8       8\n 9        9       9       9\n10       10      10      10\n\n&gt; df_parquet\n# A tibble: 10 × 3\n   integers doubles strings\n      &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  \n 1        1       1 01     \n 2        2       2 02     \n 3        3       3 03     \n 4        4       4 04     \n 5        5       5 05     \n 6        6       6 06     \n 7        7       7 07     \n 8        8       8 08     \n 9        9       9 09     \n10       10      10 10"
   },
   {
-    "objectID": "materials/slides/03-arrow.html#inside-a-parquet-file",
-    "href": "materials/slides/03-arrow.html#inside-a-parquet-file",
+    "objectID": "materials/slides/03-arrow.html#what-is-inside-a-parquet-file",
+    "href": "materials/slides/03-arrow.html#what-is-inside-a-parquet-file",
     "title": "parquet, arrow, duckdb",
-    "section": "Inside a Parquet File",
-    "text": "Inside a Parquet File\n\n\n\nRow groups: Horizontal partitions of data\nColumn chunks: Columnar data within a row group\nPages: Small units of column chunk data\nFooter: Contains file metadata and schema"
+    "section": "What is inside a Parquet file?",
+    "text": "What is inside a Parquet file?\n\nSchema metadata\n\nSelf-describing format\nPreserves column types\nType-safe data interchange\n\nThe data itself\n\nEncodings\nAdvanced compression\n\n\n\nEncodings: - Dictionary — Particularly effective for categorical data - Run-length encoding - Efficient storage of sequential repeated values\nAdvanced compression:\n\nColumn-specific compression algorithms\nBoth dictionary and value compression"
+  },
+  {
+    "objectID": "materials/slides/03-arrow.html#structure-of-a-parquet-file",
+    "href": "materials/slides/03-arrow.html#structure-of-a-parquet-file",
+    "title": "parquet, arrow, duckdb",
+    "section": "Structure of a Parquet File",
+    "text": "Structure of a Parquet File\n\n\n\nRow groups: Horizontal partitions of data\nColumn chunks: Columnar data within a row group\nPages: Small units of column chunk data\nFooter: Contains file metadata and schema"
   },
   {
     "objectID": "materials/slides/03-arrow.html#benchmarks-parquet-vs-csv",
@@ -193,14 +221,21 @@
     "href": "materials/slides/03-arrow.html#reading-efficiency-selecting-columns",
     "title": "parquet, arrow, duckdb",
     "section": "Reading Efficiency: Selecting Columns",
-    "text": "Reading Efficiency: Selecting Columns\n\nWith CSV:\n\nMust read entire file, even if you only need a few columns\nNo efficient way to skip columns during read\n\nWith Parquet:\n\nRead only needed columns from disk\nSignificant performance benefit for wide tables\n\n\n\n\nsystem.time({\n  df_subset &lt;- read_parquet(\n    \"CA_person_2021.parquet\", \n    col_select = c(\"PUMA\", \"COW\")\n  )\n})\n\n\n\n\n   user  system elapsed \n  0.027   0.003   0.031 \n\n   user  system elapsed \n  1.017   0.207   0.568"
+    "text": "Reading Efficiency: Selecting Columns\n\nWith CSV:\n\nMust read entire file, even if you only need a few columns\nNo efficient way to skip columns during read\n\nWith Parquet:\n\nRead only needed columns from disk\nSignificant performance benefit for wide tables"
+  },
+  {
+    "objectID": "materials/slides/03-arrow.html#reading-efficiency-selecting-columns-1",
+    "href": "materials/slides/03-arrow.html#reading-efficiency-selecting-columns-1",
+    "title": "parquet, arrow, duckdb",
+    "section": "Reading Efficiency: Selecting Columns",
+    "text": "Reading Efficiency: Selecting Columns\n\n\nsystem.time({\n  df_subset &lt;- read_parquet(\n    \"CA_person_2021.parquet\", \n    col_select = c(\"PUMA\", \"COW\")\n  )\n})\n\n\n\n\n   user  system elapsed \n  0.027   0.003   0.031 \n\n   user  system elapsed \n  1.017   0.207   0.568"
   },
   {
     "objectID": "materials/slides/03-arrow.html#nanoparquet-vs.-arrow-reader",
     "href": "materials/slides/03-arrow.html#nanoparquet-vs.-arrow-reader",
     "title": "parquet, arrow, duckdb",
     "section": "nanoparquet vs. arrow Reader",
-    "text": "nanoparquet vs. arrow Reader\n\nnanoparquet\n\nLightweight Parquet reader\nMinimal dependencies\nGood for embedding\n\narrow\n\nFull-featured reader\nSupport for datasets\nIntegration with Arrow ecosystem\nOptimized for analytics workloads"
+    "text": "nanoparquet vs. arrow Reader\n\nnanoparquet\n\nLightweight Parquet reader\nMinimal dependencies\nGood for embedding\n\narrow\n\nFull-featured reader\nSupport for datasets\nIntegration with Arrow ecosystem"
   },
   {
     "objectID": "materials/slides/03-arrow.html#nanoparquet-vs.-arrow-reader-1",
@@ -214,14 +249,14 @@
     "href": "materials/slides/03-arrow.html#parquet-tooling-ecosystem",
     "title": "parquet, arrow, duckdb",
     "section": "Parquet Tooling Ecosystem",
-    "text": "Parquet Tooling Ecosystem\nLanguages with native Parquet support:\n\nR (via arrow)\nPython (via pyarrow, pandas)\nJava\nC++\nRust\nJavaScript\nGo"
+    "text": "Parquet Tooling Ecosystem\nLanguages with native Parquet support:\n\nR (via arrow, nanoparquet)\nPython (via pyarrow, pandas)\nJava\nC++\nRust\nJavaScript\nGo"
   },
   {
     "objectID": "materials/slides/03-arrow.html#parquet-tooling-ecosystem-1",
     "href": "materials/slides/03-arrow.html#parquet-tooling-ecosystem-1",
     "title": "parquet, arrow, duckdb",
     "section": "Parquet Tooling Ecosystem",
-    "text": "Parquet Tooling Ecosystem\nSystems with Parquet integration:\n\nApache Spark\nApache Hadoop\nApache Drill\nSnowflake\nAmazon Athena\nGoogle BigQuery\nDuckDB"
+    "text": "Parquet Tooling Ecosystem\nSystems with Parquet integration:\n\nDuckDB\nGoogle BigQuery\nSnowflake\nAmazon Athena\nApache Spark\nApache Hadoop"
   },
   {
     "objectID": "materials/slides/03-arrow.html#introduction-to-the-arrow-package",
@@ -242,14 +277,14 @@
     "href": "materials/slides/03-arrow.html#demo-using-dplyr-with-arrow",
     "title": "parquet, arrow, duckdb",
     "section": "Demo: Using dplyr with arrow",
-    "text": "Demo: Using dplyr with arrow\n\n# Create an Arrow Table\ndf &lt;- read_parquet(\"CA_person_2021.parquet\", as_data_frame = FALSE)\n\n# Use dplyr verbs with arrow tables\ndf |&gt;\n  filter(AGEP &gt;= 16) |&gt;\n  summarize(\n    mean_commute_time = sum(JWMNP * PWGTP, na.rm = TRUE) /\n      sum(PWGTP),\n    count = n()\n  ) \n\n\nThe dataframe is backed by altrep, actually. But generally functions like any other dataframe."
+    "text": "Demo: Using dplyr with arrow\n\n# Create an Arrow Table\ntable &lt;- read_parquet(\"CA_person_2021.parquet\", as_data_frame = FALSE)\n\n# Use dplyr verbs with arrow tables\ntable |&gt;\n  filter(AGEP &gt;= 16) |&gt;\n  summarize(\n    mean_commute_time = sum(JWMNP * PWGTP, na.rm = TRUE) /\n      sum(PWGTP),\n    count = n()\n  ) |&gt;\n  collect()\n\n\nWithout as_data_frame = FALSE: the dataframe is backed by altrep, actually. But generally functions like any other dataframe."
   },
   {
     "objectID": "materials/slides/03-arrow.html#introduction-to-duckdb",
     "href": "materials/slides/03-arrow.html#introduction-to-duckdb",
     "title": "parquet, arrow, duckdb",
     "section": "Introduction to DuckDB",
-    "text": "Introduction to DuckDB\n\n\nAnalytical SQL database system\n\nEmbedded database (like SQLite)\nColumn oriented\nIn-process query execution\n\nKey features:\n\nDirect Parquet querying\nVectorized query execution\nParallel processing\nZero-copy integration with arrow\n\n\n\nThe zero-copy integration with arrow is because DuckDB uses basically the same format for it’s own internal representation."
+    "text": "Introduction to DuckDB\n\n\nAnalytical SQL database system\n\nEmbedded database (like SQLite)\nColumn oriented\nIn-process query execution\n\nFeatures:\n\nDirect Parquet querying\nParallel processing\nZero-copy integration with arrow\n\n\n\nThe zero-copy integration with arrow is because DuckDB uses basically the same format for it’s own internal representation."
   },
   {
     "objectID": "materials/slides/03-arrow.html#duckdb",
@@ -273,18 +308,11 @@
     "text": "data.table\n\nlibrary(arrow)\nlibrary(data.table)\n\n# Read Parquet file with Arrow\npums_data &lt;- read_parquet(\"CA_person_2021.parquet\")\n\n# Convert to data.table\npums_dt &lt;- as.data.table(pums_data)\n\n# data.table query\npums_dt[AGEP &gt;= 16,\n  .(avg_commute_time = sum(JWMNP * PWGTP, na.rm = TRUE) / sum(PWGTP), \n    count = .N)]"
   },
   {
-    "objectID": "materials/slides/03-arrow.html#arrow-query-execution",
-    "href": "materials/slides/03-arrow.html#arrow-query-execution",
-    "title": "parquet, arrow, duckdb",
-    "section": "Arrow Query Execution",
-    "text": "Arrow Query Execution\n\n# Create an Arrow Dataset\npums_ds &lt;- open_dataset(\"pums_dataset_dir/\")\n\n# Execute query with Arrow\nresult &lt;- pums_ds |&gt;\n  filter(AGEP &gt;= 16) |&gt;\n  group_by(ST) |&gt;\n  summarize(\n    avg_commute_time = mean(JWMNP, na.rm = TRUE),\n    count = n()\n  ) |&gt;\n  arrange(desc(avg_commute_time)) |&gt;\n  collect()"
-  },
-  {
     "objectID": "materials/slides/03-arrow.html#demo-seamless-integration-arrow-duckdb",
     "href": "materials/slides/03-arrow.html#demo-seamless-integration-arrow-duckdb",
     "title": "parquet, arrow, duckdb",
     "section": "Demo: Seamless Integration Arrow ↔︎ DuckDB",
-    "text": "Demo: Seamless Integration Arrow ↔︎ DuckDB\n\ndf &lt;- read_parquet(\"CA_person_2021.parquet\")\n\n# Use dplyr verbs with arrow tables\ndf |&gt;\n  filter(AGEP &gt;= 16) |&gt;\n  to_duckdb() |&gt;\n  summarize(\n    mean_commute_time = sum(JWMNP * PWGTP, na.rm = TRUE) /\n      sum(PWGTP),\n    count = n()\n  )"
+    "text": "Demo: Seamless Integration Arrow ↔︎ DuckDB\n\ntable &lt;- read_parquet(\"CA_person_2021.parquet\", as_data_frame = FALSE)\n\n# Use dplyr verbs with arrow tables\ntable |&gt;\n  filter(AGEP &gt;= 16) |&gt;\n  to_duckdb() |&gt;\n  summarize(\n    mean_commute_time = sum(JWMNP * PWGTP, na.rm = TRUE) /\n      sum(PWGTP),\n    count = n()\n  )"
   },
   {
     "objectID": "materials/slides/03-arrow.html#understanding-arrow-datasets-vs.-tables",
@@ -294,18 +322,18 @@
     "text": "Understanding Arrow Datasets vs. Tables\n\n\nArrow Table\n\nIn-memory data structure\nMust fit in RAM\nFast operations\nSimilar to base data frames\nGood for single file data\n\n\nArrow Dataset\n\nCollection of files\nLazily evaluated\nLarger-than-memory capable\nDistributed execution\nSupports partitioning"
   },
   {
-    "objectID": "materials/slides/03-arrow.html#demo-opening-and-querying-multi-file-datasets",
-    "href": "materials/slides/03-arrow.html#demo-opening-and-querying-multi-file-datasets",
+    "objectID": "materials/slides/03-arrow.html#demo-querying-multi-file-datasets",
+    "href": "materials/slides/03-arrow.html#demo-querying-multi-file-datasets",
     "title": "parquet, arrow, duckdb",
-    "section": "Demo: Opening and Querying Multi-file Datasets",
-    "text": "Demo: Opening and Querying Multi-file Datasets\n\npums_ds &lt;- open_dataset(\"data/person\")\n\n# Examine the dataset, list files\nprint(pums_ds)\nhead(pums_ds$files)\n\n# Query execution with lazy evaluation\npums_ds |&gt;\n  filter(AGEP &gt;= 16) |&gt;\n  group_by(year, ST) |&gt;\n  summarize(\n    mean_commute_time = sum(JWMNP * PWGTP, na.rm = TRUE) /\n      sum(PWGTP),\n    count = n()\n  ) |&gt;\n  collect()"
+    "section": "Demo: Querying Multi-file Datasets",
+    "text": "Demo: Querying Multi-file Datasets\n\npums_ds &lt;- open_dataset(\"data/person\")\n\n# Examine the dataset, list files\nprint(pums_ds)\nhead(pums_ds$files)\n\n# Query execution with lazy evaluation\npums_ds |&gt;\n  filter(AGEP &gt;= 16) |&gt;\n  group_by(year, ST) |&gt;\n  summarize(\n    mean_commute_time = sum(JWMNP * PWGTP, na.rm = TRUE) /\n      sum(PWGTP),\n    count = n()\n  ) |&gt;\n  collect()\n\n\nMention Acero engine in C++"
   },
   {
     "objectID": "materials/slides/03-arrow.html#lazy-evaluation-and-query-optimization",
     "href": "materials/slides/03-arrow.html#lazy-evaluation-and-query-optimization",
     "title": "parquet, arrow, duckdb",
     "section": "Lazy Evaluation and Query Optimization",
-    "text": "Lazy Evaluation and Query Optimization\n\nLazy evaluation workflow:\n\nDefine operations (filter, group, summarize)\nArrow builds an execution plan\nOptimizes the plan (predicate pushdown, etc.)\nOnly reads necessary data from disk\nExecutes when collect() is called\n\nBenefits:\n\nMinimizes memory usage\nReduces I/O operations\nLeverages Arrow’s native compute functions"
+    "text": "Lazy Evaluation and Query Optimization\n\nLazy evaluation workflow:\n\nDefine operations (filter, group, summarize)\nOptimizes the plan (predicate pushdown, et c.)\nOnly reads necessary data from disk\nExecutes when collect() is called\n\nBenefits:\n\nMinimizes memory usage + reduces I/O\nLeverages Arrow’s native compute functions"
   },
   {
     "objectID": "materials/slides/03-arrow.html#working-with-datasets-on-s3",
@@ -326,7 +354,7 @@
     "href": "materials/slides/03-arrow.html#demo-sipping-data",
     "title": "parquet, arrow, duckdb",
     "section": "Demo: Sipping data",
-    "text": "Demo: Sipping data\n\npums_ds &lt;- open_dataset(\"s3://scaling-arrow-pums/person/\")\n\n# Query execution with lazy evaluation\npums_ds |&gt;\n  filter(AGEP &gt;= 97) |&gt;\n  collect()\n\n\nSys.getpid() nettop -p X"
+    "text": "Demo: Sipping data\n\npums_ds &lt;- open_dataset(\"s3://scaling-arrow-pums/person/\")\n\n# Query execution with lazy evaluation\npums_ds |&gt;\n  filter(AGEP &gt;= 97) |&gt;\n  collect()\n\n\nAround ~110MB\nSys.getpid() nettop -p X"
   },
   {
     "objectID": "materials/slides/03-arrow.html#what-is-partitioning",
@@ -347,7 +375,7 @@
     "href": "materials/slides/03-arrow.html#effective-partitioning-strategies",
     "title": "parquet, arrow, duckdb",
     "section": "Effective Partitioning Strategies",
-    "text": "Effective Partitioning Strategies\n\nChoose partition columns wisely:\n\nLow to medium cardinality\nCommonly used in filters\nBalanced data distribution\n\nCommon partition dimensions:\n\nTime (year, month, day)\nGeography (country, state, region)\nCategory (product type, department)\nSource (system, sensor)"
+    "text": "Effective Partitioning Strategies\n\nChoose partition columns wisely:\n\nCommonly used in filters\nLow to medium cardinality\n\nCommon partition dimensions:\n\nTime (year, month, day)\nGeography (country, state, region)\nCategory (product type, department)"
   },
   {
     "objectID": "materials/slides/03-arrow.html#partitioning-in-practice-writing-datasets",
@@ -360,15 +388,15 @@
     "objectID": "materials/slides/03-arrow.html#demo-repartitioning-the-whole-dataset",
     "href": "materials/slides/03-arrow.html#demo-repartitioning-the-whole-dataset",
     "title": "parquet, arrow, duckdb",
-    "section": "Demo: repartitioning the whole dataset",
-    "text": "Demo: repartitioning the whole dataset\n\npums_data &lt;- open_dataset(\"data/person\")\n\npums_data |&gt;\n  mutate(\n    age_group = case_when(\n      AGEP &lt; 18 ~ \"under_18\",\n      AGEP &lt; 30 ~ \"18_29\",\n      AGEP &lt; 45 ~ \"30_44\",\n      AGEP &lt; 65 ~ \"45_64\",\n      TRUE ~ \"65_plus\"\n    )\n  ) |&gt;\n  group_by(year, ST, age_group) |&gt;\n  write_dataset(\n    path = \"pums_by_age/\"\n  )"
+    "section": "Demo: Repartitioning the whole dataset",
+    "text": "Demo: Repartitioning the whole dataset\n\npums_data &lt;- open_dataset(\"data/person\")\n\npums_data |&gt;\n  mutate(\n    age_group = case_when(\n      AGEP &lt; 18 ~ \"under_18\",\n      AGEP &lt; 30 ~ \"18_29\",\n      AGEP &lt; 45 ~ \"30_44\",\n      AGEP &lt; 65 ~ \"45_64\",\n      TRUE ~ \"65_plus\"\n    )\n  ) |&gt;\n  group_by(year, ST, age_group) |&gt;\n  write_dataset(\n    path = \"pums_by_age/\"\n  )\n\n\nuser system elapsed 386.530 65.862 115.496"
   },
   {
     "objectID": "materials/slides/03-arrow.html#best-practices-for-partition-design",
     "href": "materials/slides/03-arrow.html#best-practices-for-partition-design",
     "title": "parquet, arrow, duckdb",
     "section": "Best Practices for Partition Design",
-    "text": "Best Practices for Partition Design\n\nAvoid over-partitioning:\n\nToo many small files = poor performance\nTarget file size: 20MB–2GB\nAvoid high-cardinality columns (e.g., user_id)\n\nConsider query patterns:\n\nPartition by commonly filtered columns\nBalance between read speed and write complexity\n\nNested partitioning considerations:\n\nOrder from highest to lowest selectivity\nLimit partition depth (2-3 levels typically sufficient)"
+    "text": "Best Practices for Partition Design\n\nAvoid over-partitioning:\n\nToo many small files = poor performance\nTarget file size: 20MB–2GB\nAvoid high-cardinality columns (e.g., user_id)\n\nConsider query patterns:\n\nPartition by commonly filtered columns\nBalance between read speed and write complexity"
   },
   {
     "objectID": "materials/slides/03-arrow.html#partitioning-performance-impact",
@@ -382,11 +410,18 @@
     "href": "materials/slides/03-arrow.html#conclusion",
     "title": "parquet, arrow, duckdb",
     "section": "Conclusion",
-    "text": "Conclusion\n\nColumn-oriented storage formats like Parquet provide massive performance advantages for analytical workloads (30x speed, 10x smaller files)\nApache Arrow enables seamless data interchange between systems without costly serialization/deserialization\nMultiple query engines (arrow, DuckDB, data.table) offer flexibility depending on your analysis needs, all using modern formats like Parquet\nPartitioning strategies help manage large datasets effectively when working with data too big for memory"
+    "text": "Conclusion\n\nColumn-oriented storage formats like Parquet provide massive performance advantages for analytical workloads (30x speed, 10x smaller files)\nPartitioning strategies help manage large datasets effectively when working with data too big for memory"
   },
   {
     "objectID": "materials/slides/03-arrow.html#conclusion-1",
     "href": "materials/slides/03-arrow.html#conclusion-1",
+    "title": "parquet, arrow, duckdb",
+    "section": "Conclusion",
+    "text": "Conclusion\n\nApache Arrow enables seamless data interchange between systems without costly serialization/deserialization\nMultiple query engines (arrow, DuckDB, data.table) offer flexibility depending on your analysis needs, all using modern formats like Parquet"
+  },
+  {
+    "objectID": "materials/slides/03-arrow.html#conclusion-2",
+    "href": "materials/slides/03-arrow.html#conclusion-2",
     "title": "parquet, arrow, duckdb",
     "section": "Conclusion",
     "text": "Conclusion\nResources:\n\nWorkshop materials: GitHub Repository\nArrow documentation: arrow.apache.org/docs/r\nParquet: parquet.apache.org\nDuckDB: duckdb.org\nBook: Scaling up with Arrow and R\n\nQuestions?"
@@ -459,35 +494,28 @@
     "href": "materials/activities/03-practice-arrow.html",
     "title": "Hands-on practice: Analysis with PUMS Data",
     "section": "",
-    "text": "detailed dataset description\n\nPublic Use Microdata Sample\n\nUS Census Bureau data\nIndividual person and household records\nAnonymized demographic information\nIncome, education, housing, commute, etc.\n\nDataset characteristics:\n\nMultiple years (2005-2022, sans 2020)\nAll US states and territories\n53 Million rows (person), 25 Million rows (household)\n200+ variables"
+    "text": "ProblemsHintsSolution\n\n\n\nLoad the PUMS person data as an arrow dataset\nWhat are the dimensions of the dataset? Number of rows? Number of columns?\nExamine the dataset:\n\nWhat columns does the dataset have?\nWhat are the column types?\n\n\n\n\nYou can use arrow::open_dataset(...) to open a dataset. Treat the dataset like it’s a data frame, can you use the same functions that you are already familiar with?\n\n\n\nlibrary(arrow)\nlibrary(dplyr)\n\n# Open the PUMS dataset\npums_ds &lt;- open_dataset(\"~/PUMS/data/person\")\n\n# dimensions\nnrow(pums_ds)\nncol(pums_ds)\n\n# Examine the dataset\npums_ds\n\n# Examine schema\nschema(pums_ds)"
   },
   {
-    "objectID": "materials/activities/03-practice-arrow.html#the-pums-dataset",
-    "href": "materials/activities/03-practice-arrow.html#the-pums-dataset",
+    "objectID": "materials/activities/03-practice-arrow.html#exercise-1-reading-partitioned-pums-data",
+    "href": "materials/activities/03-practice-arrow.html#exercise-1-reading-partitioned-pums-data",
     "title": "Hands-on practice: Analysis with PUMS Data",
     "section": "",
-    "text": "detailed dataset description\n\nPublic Use Microdata Sample\n\nUS Census Bureau data\nIndividual person and household records\nAnonymized demographic information\nIncome, education, housing, commute, etc.\n\nDataset characteristics:\n\nMultiple years (2005-2022, sans 2020)\nAll US states and territories\n53 Million rows (person), 25 Million rows (household)\n200+ variables"
+    "text": "ProblemsHintsSolution\n\n\n\nLoad the PUMS person data as an arrow dataset\nWhat are the dimensions of the dataset? Number of rows? Number of columns?\nExamine the dataset:\n\nWhat columns does the dataset have?\nWhat are the column types?\n\n\n\n\nYou can use arrow::open_dataset(...) to open a dataset. Treat the dataset like it’s a data frame, can you use the same functions that you are already familiar with?\n\n\n\nlibrary(arrow)\nlibrary(dplyr)\n\n# Open the PUMS dataset\npums_ds &lt;- open_dataset(\"~/PUMS/data/person\")\n\n# dimensions\nnrow(pums_ds)\nncol(pums_ds)\n\n# Examine the dataset\npums_ds\n\n# Examine schema\nschema(pums_ds)"
   },
   {
-    "objectID": "materials/activities/03-practice-arrow.html#reading-partitioned-pums-data",
-    "href": "materials/activities/03-practice-arrow.html#reading-partitioned-pums-data",
+    "objectID": "materials/activities/03-practice-arrow.html#exercise-2-basic-filtering-and-aggregation",
+    "href": "materials/activities/03-practice-arrow.html#exercise-2-basic-filtering-and-aggregation",
     "title": "Hands-on practice: Analysis with PUMS Data",
-    "section": "Reading Partitioned PUMS Data",
-    "text": "Reading Partitioned PUMS Data\n\nProblemsHintsSolution\n\n\n\nLoad the PUMS person data as an arrow dataset\nWhat are the dimensions of the dataset? Number of rows? Number of columns?\nExamine the dataset:\n\nWhat columns does the dataset have?\nWhat are the column types?\n\n\n\n\nYou can use arrow::open_dataset(...) to open a dataset. Treat the dataset like it’s a data frame, can you use the same functions that you are already familiar with?\n\n\n\nlibrary(arrow)\nlibrary(dplyr)\n\n# Open the PUMS dataset\npums_ds &lt;- open_dataset(\"~/PUMS/data/person\")\n\n# dimensions\nnrow(pums_ds)\nncol(pums_ds)\n\n# Examine the dataset\npums_ds\n\n# Examine schema\nschema(pums_ds)"
+    "section": "Exercise 2: Basic Filtering and Aggregation",
+    "text": "Exercise 2: Basic Filtering and Aggregation\n\nProblemsHintSolution\n\n\n\nWhat was the population of Tennessee in 2018?\nWhat was the population of Tennessee over the last five years of available data?\n\n\n\nTry using familiar dplyr verbs: filter(), summarize(), et c.\n\n\n\nlibrary(arrow)\nlibrary(dplyr)\n\n# Open the PUMS dataset\npums_ds &lt;- open_dataset(\"~/PUMS/data/person\")\n\npums_ds |&gt;\n  filter(year == 2018, location == \"tn\") |&gt;\n  summarize(\n    n = n(),\n    population = sum(PWGTP)\n  ) |&gt;\n  collect()\n\npums_ds |&gt;\n  filter(location == \"tn\") |&gt;\n  group_by(year) |&gt;\n  summarize(\n    n = n(),\n    population = sum(PWGTP)\n  ) |&gt;\n  arrange(-year) |&gt;\n  slice_head(n = 5) |&gt;\n  collect()"
   },
   {
-    "objectID": "materials/activities/03-practice-arrow.html#exercise-1-basic-filtering-and-aggregation",
-    "href": "materials/activities/03-practice-arrow.html#exercise-1-basic-filtering-and-aggregation",
+    "objectID": "materials/activities/03-practice-arrow.html#exercise-3-using-duckdb-with-pums-data",
+    "href": "materials/activities/03-practice-arrow.html#exercise-3-using-duckdb-with-pums-data",
     "title": "Hands-on practice: Analysis with PUMS Data",
-    "section": "Exercise 1: Basic Filtering and Aggregation",
-    "text": "Exercise 1: Basic Filtering and Aggregation\n\nProblemsSolution\n\n\n\n\n\n\n# Calculate average income by state for 2021\nresult1 &lt;- pums_ds |&gt;\n  filter(year == 2021) |&gt;\n  filter(PINCP &gt; 0) |&gt;  # Positive income only\n  group_by(location) |&gt;\n  summarize(\n    avg_income = mean(PINCP, na.rm = TRUE),\n    median_income = quantile(PINCP, 0.5, na.rm = TRUE),\n    n = n()\n  ) |&gt;\n  arrange(desc(avg_income)) |&gt;\n  collect()\n\n# View results\nhead(result1)"
-  },
-  {
-    "objectID": "materials/activities/03-practice-arrow.html#exercise-2-using-duckdb-with-pums-data",
-    "href": "materials/activities/03-practice-arrow.html#exercise-2-using-duckdb-with-pums-data",
-    "title": "Hands-on practice: Analysis with PUMS Data",
-    "section": "Exercise 2: Using DuckDB with PUMS Data",
-    "text": "Exercise 2: Using DuckDB with PUMS Data\n\nProblemsSolution\n\n\n\n\n\n\nlibrary(arrow)\nlibrary(duckdb)\nlibrary(DBI)\n\n# Open the PUMS dataset with Arrow\npums_ds &lt;- open_dataset(\"data/person\")\n\n# Filter to just 2021 data for Washington\nwa_2021 &lt;- pums_ds |&gt;\n  filter(year == 2021, location == \"wa\") |&gt;\n  collect()\n\n# Create DuckDB connection\ncon &lt;- dbConnect(duckdb())\n\n# Register Arrow Table with DuckDB\nduckdb::duckdb_register_arrow(con, \"pums_wa\", wa_2021)\n\n# Run SQL query\nresult &lt;- dbGetQuery(con, \"\n  SELECT \n    CASE \n      WHEN AGEP &lt; 18 THEN 'Under 18'\n      WHEN AGEP &lt; 30 THEN '18-29'\n      WHEN AGEP &lt; 45 THEN '30-44'\n      WHEN AGEP &lt; 65 THEN '45-64'\n      ELSE '65+'\n    END AS age_group,\n    AVG(JWMNP) AS avg_commute_time,\n    COUNT(*) AS n\n  FROM pums_wa\n  WHERE JWMNP &gt; 0\n  GROUP BY age_group\n  ORDER BY age_group\n\")\n\n# Disconnect when done\ndbDisconnect(con, shutdown = TRUE)"
+    "section": "Exercise 3: Using DuckDB with PUMS Data",
+    "text": "Exercise 3: Using DuckDB with PUMS Data\n\nProblemsHintSolution\n\n\nFor each state, compute the minimum commute time and the maximum commute time. Return it in a long data frame (hint, you’ll need to use tidyr::pivot_longer here) with the columns: location, commute_metric (values: max_commute, min_commute), time.\nFor motivation: if you were trying to plot using ggplot2 and wanted both the minimums and the maximums to show up on the same plot.\n\n\nArrow’s query engine doesn’t support tidyr::pivot_longer. So you’ll need to use to_duckdb() and then use duckdb from there.\n\n\n\nlibrary(arrow)\nlibrary(duckdb)\nlibrary(tidyr)\n\n# Open the PUMS dataset\npums_ds &lt;- open_dataset(\"~/PUMS/data/person\")\n\npums_ds |&gt;\n  group_by(location) |&gt;\n  summarize(\n    max_commute = max(JWMNP, na.rm = TRUE),\n    min_commute = min(JWMNP, na.rm = TRUE)\n  ) |&gt;\n  to_duckdb() |&gt; \n  pivot_longer(!location, names_to = \"commute_metric\", values_to = \"time\") |&gt;\n  arrange(location) |&gt;\n  collect()"
   },
   {
     "objectID": "materials/activities/03-practice-arrow.html#challenge-formulate-your-own-analysis",
@@ -495,6 +523,13 @@
     "title": "Hands-on practice: Analysis with PUMS Data",
     "section": "Challenge: Formulate Your Own Analysis",
     "text": "Challenge: Formulate Your Own Analysis\n\nChoose a research question:\n\nHow has commute time changed over the years?\nWhat’s the relationship between education and income?\nHow does housing cost burden vary by state?\nYour own question…\n\nImplement the analysis using:\n\nArrow Dataset operations\nDuckDB SQL queries\nData visualization\n\nCompare performance between approaches"
+  },
+  {
+    "objectID": "materials/activities/03-practice-arrow.html#the-pums-dataset",
+    "href": "materials/activities/03-practice-arrow.html#the-pums-dataset",
+    "title": "Hands-on practice: Analysis with PUMS Data",
+    "section": "The PUMS Dataset",
+    "text": "The PUMS Dataset\ndetailed dataset description\n\nPublic Use Microdata Sample\n\nUS Census Bureau data\nIndividual person and household records\nAnonymized demographic information\nIncome, education, housing, commute, et c.\n\nDataset characteristics:\n\nMultiple years (2005-2022, sans 2020)\nAll US states and territories\n53 Million rows (person), 25 Million rows (household)\n200+ variables"
   },
   {
     "objectID": "materials/activities/04-practice-workflow.html#demo",
