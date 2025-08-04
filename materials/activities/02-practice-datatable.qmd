@@ -26,6 +26,7 @@ library(dplyr)
 ```
 
 ```{r}
+#| eval: false
 # Load PUMS data (same as in slides)
 pums <- open_dataset(here::here("data", "PUMS", "person")) |> collect()
 setDT(pums)
