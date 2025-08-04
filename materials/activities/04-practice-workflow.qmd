@@ -22,7 +22,7 @@ states <- c("ak", "al", "ar", "az", "wa", "wi", "wv", "wy")
 dat <- data.frame()
 
 for (state in states) {
-  my_files <- list.files(glue("./materials/data/raw_csvs/person/2021/{state}/"), full.names = TRUE)
+  my_files <- list.files(glue::glue("./materials/data/raw_csvs/person/2021/{state}/"), full.names = TRUE)
   
   for (file in my_files) {
     
