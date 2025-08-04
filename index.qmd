@@ -49,7 +49,7 @@ This is the full dataset, but does require that you setup your AWS CLI and wait 
 |:----------------:|:------------------------------:|:--------------------:|
 | 8:30 - 9:00 | [Introductions, Installs, Set-up](materials/slides/00-setup-intro.qmd) | all |
 | 9:00 - 9:45 | [I. Identify slowdowns and solutions](materials/slides/01-slowdowns-solutions.qmd) | Kelly |
-| 9:45 - 10:15 | [Activity 1](materials/activities/01-practice-data.qmd) | Kelly |
+| 9:45 - 10:15 | [Activity 1](https://raw.githubusercontent.com/kbodwin/jsm-big-data-2025/refs/heads/main/materials/activities/01-practice-slowdowns.qmd) | Kelly |
 | 10:15 - 10:30 | Break |  |
 | 10:30 - 11:30 | [II. data.table for fast wrangling](materials/slides/02-datatable.qmd) | Tyson |
 | 11:30 - 12:00| [Activity 2](materials/activities/02-practice-datatable.qmd) | Tyson |
