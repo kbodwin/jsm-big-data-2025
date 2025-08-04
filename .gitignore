@@ -9,3 +9,5 @@ dev
 **.DS_Store
 
 docs
+
+/data/

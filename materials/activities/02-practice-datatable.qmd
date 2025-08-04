@@ -1,10 +1,126 @@
 ---
-title: ""
+title: "`data.table`"
+subtitle: "Activity"
+format: 
+  revealjs:
+    footer: "[JSM: Large Data](https://github.com/kbodwin/jsm-large-data)"
+    theme: simple
+    scrollable: true
+    embed-resources: true
 editor: source
+execute:
+  message: false
+  warning: false
+  echo: true
 ---
+
 
 ## Setup
 
+Download [zip file](https://github.com/arrowrbook/book/releases/download/PUMS_subset/PUMS.subset.zip)
+
+```{r}
+library(data.table)
+library(arrow)
+library(dplyr)
+```
+
+```{r}
+#| eval: false
+# Load PUMS data (same as in slides)
+pums <- open_dataset(here::here("data", "PUMS", "person")) |> collect()
+setDT(pums)
+
+# Add age groups variable for exercises
+pums[, age_groups := fcase(AGEP < 18, "Under 18", AGEP < 65, "18-64", default = "65+")]
+```
+
 ## Demo
 
+```{r}
+#| eval: false
+# Select columns (j)
+pums[, .(AGEP, SEX, ST)]
+
+# Filter rows (i)
+pums[year == 2021 & location == "ak"]
+
+# Summarize by groups (by)
+pums[, .(total_pop = sum(PWGTP)), by = ST]
+
+# Add new columns with :=
+pums[, total_pop := sum(PWGTP), by = ST]
+pums[, age_decade := floor(AGEP / 10) * 10]
+
+# Chain operations
+pums[year == 2021][, .(avg_age = mean(AGEP)), by = ST][order(-avg_age)]
+```
+
 ## Your Turn
+
+Try these exercises with the PUMS dataset:
+
+1. **Find the unique values of the `ST` variable**: use `data.table` syntax or `dtplyr` syntax to find the unique values of the `ST` variable.
+
+```{r}
+# Your code here
+```
+
+## Your Turn
+
+2. **Basic filtering and grouping**: Calculate total population by `age_groups` for both Alaska and California across years.
+
+```{r}
+# Your code here
+```
+
+## Your Turn
+
+3. **Population comparison**: Compare total population across all states for 2021
+
+```{r}
+# Your code here
+```
+
+## Your Turn
+
+4. **Income analysis**: Find the median personal income (`PINCP`) by age group across all years.
+
+```{r}
+# Your code here
+```
+
+## Your Turn
+
+5. **Chaining operations**: Find the state with the highest average age in 2022, sorted from oldest to youngest
+
+```{r}
+# Your code here
+```
+
+## Your Turn
+
+6. **Creating new variables**: Add a variable for income brackets (`PINCP`) and calculate employment rates (`ESR`) by bracket
+
+```{r}
+# Hint: Use PINCP for income, ESR for employment status
+# Your code here
+```
+
+## Your Turn
+
+7. **Rolling Joins (extra challenging)**: Using the variables produced in number 6, join with the following data using the roll parameter to create a new variable called `col_adjustment`. 
+
+```{r}
+col_adjustments <- data.table(
+  state_code = c(1, 2, 3, 4, 5, 6, 7, 8, 9),  # WV, WI, AL, AZ, AR, WY, WA, CA, AK
+  state_name = c(
+    "West Virginia", "Wisconsin", "Alabama", "Arizona", "Arkansas", 
+    "Wyoming", "Washington", "California", "Alaska"),
+  col_factor = c(0.82, 0.88, 0.85, 0.92, 0.83, 0.89, 1.08, 1.25, 1.15)
+)
+setkey(col_adjustments, state_code)
+
+# Hint try both roll = -Inf and roll = +Inf and see which one makes sense for this scenario
+# Your code here
+```
